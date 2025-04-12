@@ -22,10 +22,13 @@ const init = () => {
   console.log("Initializing build server...");
   const outputDir = path.join(__dirname, "output");
 
+  console.log("Executing npm install & build...");
   const p = exec(`cd ${outputDir} && npm install && npm run build`);
+
   p.stdout.on("data", (data) => {
-    console.log(data.toString());
+    console.log("Build:", data.toString());
   });
+
   p.stdout.on("error", (data) => {
     console.error("error", data.toString());
   });
@@ -38,13 +41,15 @@ const init = () => {
     });
     console.log("dist folder contents", distFolderContents);
 
-    for (const filePath of distFolderContents) {
+    for (const file of distFolderContents) {
+      const filePath = path.join(distFolderPath, file);
+      // Skip if the file is a directory
       if (fs.lstatSync(filePath).isDirectory()) continue;
 
       console.log(`Uploading ${filePath} to S3...`);
       const command = new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: `__outputs/${PROJECT_ID}/${filePath}`,
+        Key: `__outputs/${PROJECT_ID}/${file}`,
         Body: fs.createReadStream(filePath),
         ContentType: mimeTypes.lookup(filePath) || "application/octet-stream",
       });
@@ -56,3 +61,5 @@ const init = () => {
     console.log("All files uploaded to S3.");
   });
 };
+
+init();
