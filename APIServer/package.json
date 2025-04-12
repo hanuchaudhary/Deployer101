@@ -12,6 +12,7 @@
   "dependencies": {
     "@aws-sdk/client-ecs": "^3.787.0",
     "@types/express": "^5.0.1",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.6.0",
