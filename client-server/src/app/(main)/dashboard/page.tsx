@@ -1,10 +1,17 @@
-import Link from "next/link"
-import { PlusCircle, GitBranch, Clock, ExternalLink } from "lucide-react"
+import Link from "next/link";
+import { PlusCircle, GitBranch, Clock, ExternalLink } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Navbar } from "@/components/Landing/Navbar"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Navbar } from "@/components/Landing/Navbar";
+import { Input } from "@/components/ui/input";
 
 export default function Dashboard() {
   // Mock data for repositories
@@ -33,7 +40,7 @@ export default function Dashboard() {
       lastDeployed: "3 days ago",
       status: "Production",
     },
-  ]
+  ];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -41,10 +48,12 @@ export default function Dashboard() {
       <main className="flex-1 mx-auto container py-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">Projects</h1>
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            New Project
-          </Button>
+          <Link href={"/deploy"}>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              New Project
+            </Button>
+          </Link>
         </div>
 
         <div className="mb-6">
@@ -56,7 +65,10 @@ export default function Dashboard() {
             <Card key={repo.id} className="overflow-hidden">
               <CardHeader className="pb-2">
                 <CardTitle className="text-xl">
-                  <Link href={`/dashboard/${repo.id}`} className="hover:underline">
+                  <Link
+                    href={`/deploy/${repo.id}`}
+                    className="hover:underline"
+                  >
                     {repo.name}
                   </Link>
                 </CardTitle>
@@ -87,5 +99,5 @@ export default function Dashboard() {
         </div>
       </main>
     </div>
-  )
+  );
 }

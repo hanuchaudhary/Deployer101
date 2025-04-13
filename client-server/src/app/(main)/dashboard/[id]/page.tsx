@@ -143,7 +143,7 @@ export default function DeploymentDetails({ params }: { params: { id: string } }
                 <div className="bg-black text-white p-4 rounded-md font-mono text-sm overflow-auto max-h-[500px]">
                   {deployment.logs.map((log) => (
                     <div key={log.id} className="mb-2">
-                      <span className="text-gray-400">[{log.timestamp}]</span> {log.message}
+                      <span className="text-muted-foreground">[{log.timestamp}]</span> {log.message}
                     </div>
                   ))}
                 </div>
