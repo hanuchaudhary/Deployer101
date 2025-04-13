@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "exports": {
-    "./client": "./src/index.ts"
+    "./client": "./index.ts"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,12 +13,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@prisma/client": "6.6.0",
-    "@repo/typescript-config": "workspace:*",
-    "prisma": "6"
-  },
   "devDependencies": {
     "@types/node": "^22.14.1"
+  },
+  "dependencies": {
+    "@prisma/client": "6.6.0",
+    "prisma": "^6.6.0"
   }
 }
