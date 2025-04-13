@@ -6,6 +6,7 @@ RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
 RUN apt-get upgrade -y
 RUN apt-get install -y nodejs
 RUN apt-get install git -y
+RUN npm install -g pnpm
 
 WORKDIR /home/app
 
@@ -14,7 +15,7 @@ COPY package*.json .
 COPY script.js .
 COPY certs /home/app/certs
 
-RUN npm install
+RUN pnpm install
 
 RUN chmod +x main.sh
 RUN chmod +x script.js
