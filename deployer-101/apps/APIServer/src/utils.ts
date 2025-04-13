@@ -1,2 +1,0 @@
-import Redis from "ioredis";
-

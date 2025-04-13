@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@repo/typescript-config": "workspace:*",
     "@types/express": "^5.0.1",
     "@types/http-proxy": "^1.17.16",
     "express": "^5.1.0",

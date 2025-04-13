@@ -3,6 +3,9 @@ import { generateSlug } from "random-word-slugs";
 import { ECSClient, RunTaskCommand } from "@aws-sdk/client-ecs";
 import Redis from "ioredis";
 import { Server } from "socket.io";
+import { prisma } from "@repo/database/client";
+import { projectSchema } from "@repo/common/validations";
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -36,7 +39,7 @@ const initRedisSubscriber = async () => {
   });
 };
 
-initRedisSubscriber()
+initRedisSubscriber();
 
 const LOCAL_ENVS = [
   "AWS_REGION",

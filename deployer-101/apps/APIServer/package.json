@@ -1,5 +1,5 @@
 {
-  "name": "apiserver",
+  "name": "api-server",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@repo/database": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/common": "workspace:*",
     "@aws-sdk/client-ecs": "^3.787.0",
     "@types/express": "^5.0.1",
     "dotenv": "^16.5.0",
