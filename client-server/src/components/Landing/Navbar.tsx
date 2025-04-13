@@ -15,7 +15,9 @@ export function Navbar() {
       <div className="flex h-14 items-center px-10">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold">Vercel Clone</span>
+            <span className="font-bold">
+              Deployer101
+            </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link
