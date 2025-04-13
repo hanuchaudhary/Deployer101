@@ -1,13 +1,24 @@
-import Link from "next/link"
-import { ArrowLeft, Github, Search } from "lucide-react"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Navbar } from "@/components/Landing/Navbar"
-import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link";
+import { ArrowLeft, Github, Search } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Navbar } from "@/components/Landing/Navbar";
+import { Card, CardContent } from "@/components/ui/card";
+import { getUserRepos } from "@/hooks/GithubRepo";
+import { useEffect } from "react";
 
 export default function NewProject() {
   // Mock data for GitHub repositories
+
+  useEffect(() => {
+    getUserRepos("hanuchaudhary").then((repos) => {
+      console.log(repos);
+    });
+  }, []);
+
   const repositories = [
     {
       id: "repo1",
@@ -44,7 +55,7 @@ export default function NewProject() {
       updatedAt: "Updated 2 weeks ago",
       language: "JavaScript",
     },
-  ]
+  ];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -58,7 +69,9 @@ export default function NewProject() {
             </Link>
           </Button>
           <h1 className="text-3xl font-bold">Import Git Repository</h1>
-          <p className="text-muted-foreground mt-2">Select a Git repository to deploy your project from.</p>
+          <p className="text-muted-foreground mt-2">
+            Select a Git repository to deploy your project from.
+          </p>
         </div>
 
         <div className="mb-6">
@@ -78,7 +91,9 @@ export default function NewProject() {
                       <Github className="mr-2 h-5 w-5" />
                       <h3 className="font-medium">{repo.name}</h3>
                     </div>
-                    <p className="text-sm text-muted-foreground">{repo.description}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {repo.description}
+                    </p>
                     <div className="flex items-center text-xs text-muted-foreground mt-2">
                       <span className="mr-4">{repo.updatedAt}</span>
                       <span>{repo.language}</span>
@@ -94,5 +109,5 @@ export default function NewProject() {
         </div>
       </main>
     </div>
-  )
+  );
 }
