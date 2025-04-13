@@ -146,7 +146,7 @@ exports.Prisma.AccountScalarFieldEnum = {
 exports.Prisma.ProjectScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  githubUrl: 'githubUrl',
+  githubRepoUrl: 'githubRepoUrl',
   subDomain: 'subDomain',
   customDomain: 'customDomain',
   createdAt: 'createdAt',
@@ -185,10 +185,13 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 exports.DEPLOYMENT_STATUS = exports.$Enums.DEPLOYMENT_STATUS = {
-  PENDING: 'PENDING',
-  DEPLOYING: 'DEPLOYING',
+  READY: 'READY',
+  IN_PROGRESS: 'IN_PROGRESS',
+  IDLE: 'IDLE',
   SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR'
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED',
+  QUEUED: 'QUEUED'
 };
 
 exports.Prisma.ModelName = {

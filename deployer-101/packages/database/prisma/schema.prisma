@@ -42,7 +42,7 @@ model Account {
 model Project {
   id           String       @id @default(uuid())
   name         String
-  githubUrl    String
+  githubRepoUrl    String
   subDomain    String       @unique
   customDomain String?      @unique
   createdAt    DateTime     @default(now())
@@ -55,17 +55,20 @@ model Project {
 }
 
 enum DEPLOYMENT_STATUS {
-  PENDING
-  DEPLOYING
-  SUCCESS
-  ERROR
+  IDLE // Initial state
+  READY // Ready to deploy
+  IN_PROGRESS // Deployment in progress
+  SUCCESS // Deployment successful
+  FAILED // Deployment failed
+  CANCELLED // Deployment cancelled
+  QUEUED // Deployment queued
 }
 
 model Deployment {
   id        String            @id @default(uuid())
   projectId String
   project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  status    DEPLOYMENT_STATUS @default(PENDING)
+  status    DEPLOYMENT_STATUS @default(IDLE)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
   logs      Log[]

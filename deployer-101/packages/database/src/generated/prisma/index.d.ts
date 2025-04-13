@@ -44,10 +44,13 @@ export type Log = $Result.DefaultSelection<Prisma.$LogPayload>
  */
 export namespace $Enums {
   export const DEPLOYMENT_STATUS: {
-  PENDING: 'PENDING',
-  DEPLOYING: 'DEPLOYING',
+  READY: 'READY',
+  IN_PROGRESS: 'IN_PROGRESS',
+  IDLE: 'IDLE',
   SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR'
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED',
+  QUEUED: 'QUEUED'
 };
 
 export type DEPLOYMENT_STATUS = (typeof DEPLOYMENT_STATUS)[keyof typeof DEPLOYMENT_STATUS]
@@ -3686,7 +3689,7 @@ export namespace Prisma {
   export type ProjectMinAggregateOutputType = {
     id: string | null
     name: string | null
-    githubUrl: string | null
+    githubRepoUrl: string | null
     subDomain: string | null
     customDomain: string | null
     createdAt: Date | null
@@ -3697,7 +3700,7 @@ export namespace Prisma {
   export type ProjectMaxAggregateOutputType = {
     id: string | null
     name: string | null
-    githubUrl: string | null
+    githubRepoUrl: string | null
     subDomain: string | null
     customDomain: string | null
     createdAt: Date | null
@@ -3708,7 +3711,7 @@ export namespace Prisma {
   export type ProjectCountAggregateOutputType = {
     id: number
     name: number
-    githubUrl: number
+    githubRepoUrl: number
     subDomain: number
     customDomain: number
     createdAt: number
@@ -3721,7 +3724,7 @@ export namespace Prisma {
   export type ProjectMinAggregateInputType = {
     id?: true
     name?: true
-    githubUrl?: true
+    githubRepoUrl?: true
     subDomain?: true
     customDomain?: true
     createdAt?: true
@@ -3732,7 +3735,7 @@ export namespace Prisma {
   export type ProjectMaxAggregateInputType = {
     id?: true
     name?: true
-    githubUrl?: true
+    githubRepoUrl?: true
     subDomain?: true
     customDomain?: true
     createdAt?: true
@@ -3743,7 +3746,7 @@ export namespace Prisma {
   export type ProjectCountAggregateInputType = {
     id?: true
     name?: true
-    githubUrl?: true
+    githubRepoUrl?: true
     subDomain?: true
     customDomain?: true
     createdAt?: true
@@ -3827,7 +3830,7 @@ export namespace Prisma {
   export type ProjectGroupByOutputType = {
     id: string
     name: string
-    githubUrl: string
+    githubRepoUrl: string
     subDomain: string
     customDomain: string | null
     createdAt: Date
@@ -3855,7 +3858,7 @@ export namespace Prisma {
   export type ProjectSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    githubUrl?: boolean
+    githubRepoUrl?: boolean
     subDomain?: boolean
     customDomain?: boolean
     createdAt?: boolean
@@ -3869,7 +3872,7 @@ export namespace Prisma {
   export type ProjectSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    githubUrl?: boolean
+    githubRepoUrl?: boolean
     subDomain?: boolean
     customDomain?: boolean
     createdAt?: boolean
@@ -3881,7 +3884,7 @@ export namespace Prisma {
   export type ProjectSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
-    githubUrl?: boolean
+    githubRepoUrl?: boolean
     subDomain?: boolean
     customDomain?: boolean
     createdAt?: boolean
@@ -3893,7 +3896,7 @@ export namespace Prisma {
   export type ProjectSelectScalar = {
     id?: boolean
     name?: boolean
-    githubUrl?: boolean
+    githubRepoUrl?: boolean
     subDomain?: boolean
     customDomain?: boolean
     createdAt?: boolean
@@ -3901,7 +3904,7 @@ export namespace Prisma {
     userId?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "githubUrl" | "subDomain" | "customDomain" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "githubRepoUrl" | "subDomain" | "customDomain" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     deployments?: boolean | Project$deploymentsArgs<ExtArgs>
@@ -3923,7 +3926,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
-      githubUrl: string
+      githubRepoUrl: string
       subDomain: string
       customDomain: string | null
       createdAt: Date
@@ -4356,7 +4359,7 @@ export namespace Prisma {
   interface ProjectFieldRefs {
     readonly id: FieldRef<"Project", 'String'>
     readonly name: FieldRef<"Project", 'String'>
-    readonly githubUrl: FieldRef<"Project", 'String'>
+    readonly githubRepoUrl: FieldRef<"Project", 'String'>
     readonly subDomain: FieldRef<"Project", 'String'>
     readonly customDomain: FieldRef<"Project", 'String'>
     readonly createdAt: FieldRef<"Project", 'DateTime'>
@@ -6995,7 +6998,7 @@ export namespace Prisma {
   export const ProjectScalarFieldEnum: {
     id: 'id',
     name: 'name',
-    githubUrl: 'githubUrl',
+    githubRepoUrl: 'githubRepoUrl',
     subDomain: 'subDomain',
     customDomain: 'customDomain',
     createdAt: 'createdAt',
@@ -7302,7 +7305,7 @@ export namespace Prisma {
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     id?: StringFilter<"Project"> | string
     name?: StringFilter<"Project"> | string
-    githubUrl?: StringFilter<"Project"> | string
+    githubRepoUrl?: StringFilter<"Project"> | string
     subDomain?: StringFilter<"Project"> | string
     customDomain?: StringNullableFilter<"Project"> | string | null
     createdAt?: DateTimeFilter<"Project"> | Date | string
@@ -7315,7 +7318,7 @@ export namespace Prisma {
   export type ProjectOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
-    githubUrl?: SortOrder
+    githubRepoUrl?: SortOrder
     subDomain?: SortOrder
     customDomain?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -7333,7 +7336,7 @@ export namespace Prisma {
     OR?: ProjectWhereInput[]
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     name?: StringFilter<"Project"> | string
-    githubUrl?: StringFilter<"Project"> | string
+    githubRepoUrl?: StringFilter<"Project"> | string
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     userId?: StringFilter<"Project"> | string
@@ -7344,7 +7347,7 @@ export namespace Prisma {
   export type ProjectOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
-    githubUrl?: SortOrder
+    githubRepoUrl?: SortOrder
     subDomain?: SortOrder
     customDomain?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -7361,7 +7364,7 @@ export namespace Prisma {
     NOT?: ProjectScalarWhereWithAggregatesInput | ProjectScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Project"> | string
     name?: StringWithAggregatesFilter<"Project"> | string
-    githubUrl?: StringWithAggregatesFilter<"Project"> | string
+    githubRepoUrl?: StringWithAggregatesFilter<"Project"> | string
     subDomain?: StringWithAggregatesFilter<"Project"> | string
     customDomain?: StringNullableWithAggregatesFilter<"Project"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
@@ -7674,7 +7677,7 @@ export namespace Prisma {
   export type ProjectCreateInput = {
     id?: string
     name: string
-    githubUrl: string
+    githubRepoUrl: string
     subDomain: string
     customDomain?: string | null
     createdAt?: Date | string
@@ -7686,7 +7689,7 @@ export namespace Prisma {
   export type ProjectUncheckedCreateInput = {
     id?: string
     name: string
-    githubUrl: string
+    githubRepoUrl: string
     subDomain: string
     customDomain?: string | null
     createdAt?: Date | string
@@ -7698,7 +7701,7 @@ export namespace Prisma {
   export type ProjectUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    githubUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoUrl?: StringFieldUpdateOperationsInput | string
     subDomain?: StringFieldUpdateOperationsInput | string
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7710,7 +7713,7 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    githubUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoUrl?: StringFieldUpdateOperationsInput | string
     subDomain?: StringFieldUpdateOperationsInput | string
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7722,7 +7725,7 @@ export namespace Prisma {
   export type ProjectCreateManyInput = {
     id?: string
     name: string
-    githubUrl: string
+    githubRepoUrl: string
     subDomain: string
     customDomain?: string | null
     createdAt?: Date | string
@@ -7733,7 +7736,7 @@ export namespace Prisma {
   export type ProjectUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    githubUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoUrl?: StringFieldUpdateOperationsInput | string
     subDomain?: StringFieldUpdateOperationsInput | string
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7743,7 +7746,7 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    githubUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoUrl?: StringFieldUpdateOperationsInput | string
     subDomain?: StringFieldUpdateOperationsInput | string
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8142,7 +8145,7 @@ export namespace Prisma {
   export type ProjectCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    githubUrl?: SortOrder
+    githubRepoUrl?: SortOrder
     subDomain?: SortOrder
     customDomain?: SortOrder
     createdAt?: SortOrder
@@ -8153,7 +8156,7 @@ export namespace Prisma {
   export type ProjectMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    githubUrl?: SortOrder
+    githubRepoUrl?: SortOrder
     subDomain?: SortOrder
     customDomain?: SortOrder
     createdAt?: SortOrder
@@ -8164,7 +8167,7 @@ export namespace Prisma {
   export type ProjectMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
-    githubUrl?: SortOrder
+    githubRepoUrl?: SortOrder
     subDomain?: SortOrder
     customDomain?: SortOrder
     createdAt?: SortOrder
@@ -8730,7 +8733,7 @@ export namespace Prisma {
   export type ProjectCreateWithoutUserInput = {
     id?: string
     name: string
-    githubUrl: string
+    githubRepoUrl: string
     subDomain: string
     customDomain?: string | null
     createdAt?: Date | string
@@ -8741,7 +8744,7 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutUserInput = {
     id?: string
     name: string
-    githubUrl: string
+    githubRepoUrl: string
     subDomain: string
     customDomain?: string | null
     createdAt?: Date | string
@@ -8816,7 +8819,7 @@ export namespace Prisma {
     NOT?: ProjectScalarWhereInput | ProjectScalarWhereInput[]
     id?: StringFilter<"Project"> | string
     name?: StringFilter<"Project"> | string
-    githubUrl?: StringFilter<"Project"> | string
+    githubRepoUrl?: StringFilter<"Project"> | string
     subDomain?: StringFilter<"Project"> | string
     customDomain?: StringNullableFilter<"Project"> | string | null
     createdAt?: DateTimeFilter<"Project"> | Date | string
@@ -9000,7 +9003,7 @@ export namespace Prisma {
   export type ProjectCreateWithoutDeploymentsInput = {
     id?: string
     name: string
-    githubUrl: string
+    githubRepoUrl: string
     subDomain: string
     customDomain?: string | null
     createdAt?: Date | string
@@ -9011,7 +9014,7 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutDeploymentsInput = {
     id?: string
     name: string
-    githubUrl: string
+    githubRepoUrl: string
     subDomain: string
     customDomain?: string | null
     createdAt?: Date | string
@@ -9062,7 +9065,7 @@ export namespace Prisma {
   export type ProjectUpdateWithoutDeploymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    githubUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoUrl?: StringFieldUpdateOperationsInput | string
     subDomain?: StringFieldUpdateOperationsInput | string
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9073,7 +9076,7 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutDeploymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    githubUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoUrl?: StringFieldUpdateOperationsInput | string
     subDomain?: StringFieldUpdateOperationsInput | string
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9174,7 +9177,7 @@ export namespace Prisma {
   export type ProjectCreateManyUserInput = {
     id?: string
     name: string
-    githubUrl: string
+    githubRepoUrl: string
     subDomain: string
     customDomain?: string | null
     createdAt?: Date | string
@@ -9229,7 +9232,7 @@ export namespace Prisma {
   export type ProjectUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    githubUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoUrl?: StringFieldUpdateOperationsInput | string
     subDomain?: StringFieldUpdateOperationsInput | string
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9240,7 +9243,7 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    githubUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoUrl?: StringFieldUpdateOperationsInput | string
     subDomain?: StringFieldUpdateOperationsInput | string
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9251,7 +9254,7 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
-    githubUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoUrl?: StringFieldUpdateOperationsInput | string
     subDomain?: StringFieldUpdateOperationsInput | string
     customDomain?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

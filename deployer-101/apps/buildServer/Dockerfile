@@ -12,6 +12,7 @@ WORKDIR /home/app
 COPY main.sh main.sh
 COPY package*.json .
 COPY script.js .
+COPY Kafka.pem Kafka.pem
 
 RUN npm install
 
