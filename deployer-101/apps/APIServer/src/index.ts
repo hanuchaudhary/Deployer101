@@ -4,7 +4,8 @@ import { Server } from "socket.io";
 import dotenv from "dotenv";
 import { projectRouter } from "./routes/project.routes";
 import { userRouter } from "./routes/user.routes";
-import { kafka } from "./config/config";
+import { clickhouseClient, kafka } from "./config/config";
+import { v4 } from "uuid";
 dotenv.config();
 
 // Socket.io server setup
@@ -26,10 +27,43 @@ io.on("connection", (socket) => {
 io.listen(7000);
 console.log("Socket.io server is running on port 7000");
 
-const consumer = kafka.consumer({ groupId: "api-server-logs-consumer" });
+const consumer = kafka().consumer({ groupId: "api-server-logs-consumer" });
 
 const initKafkaConsumer = async () => {
   await consumer.subscribe({ topic: "logs" });
+  await consumer.run({
+    autoCommit: false,
+    eachBatch: async ({
+      batch,
+      commitOffsetsIfNecessary,
+      heartbeat,
+      resolveOffset,
+    }) => {
+      const messages = batch.messages;
+      console.log("Received messages:", messages.length);
+      for (const message of messages) {
+        const parsedMessage = JSON.parse(message.value?.toString() || "{}");
+        console.log("Parsed message:", parsedMessage);
+        const { query_id } = await clickhouseClient.insert({
+          table: "log_events",
+          values: [
+            {
+              event_id: v4(),
+              deployment_id: parsedMessage.deploymentId,
+              // project_id: parsedMessage.projectId,
+              log: parsedMessage.log,
+            },
+          ],
+        });
+
+        resolveOffset(message.offset);
+        await commitOffsetsIfNecessary();
+        await heartbeat();
+
+        console.log("Inserted log event with query ID:", query_id);
+      }
+    },
+  });
 };
 
 // This is a list of environment variables that are required for the application to run locally.

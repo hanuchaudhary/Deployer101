@@ -14,24 +14,25 @@ export const ecsClient = new ECSClient({
   },
 });
 
-
 // Redis Client configuration
 export const redisClient = new Redis(process.env.REDIS_URL || "");
 
-
 // Kafka Client configuration
-export const kafka = new Kafka({
-  clientId: `api-server`,
-  brokers: [process.env.KAFKA_BROKER!],
-  ssl: {
-    ca: [fs.readFileSync(path.join(__dirname, "kafka.pem"), "utf-8")],
-  },
-  sasl: {
-    username: process.env.KAFKA_USERNAME!,
-    password: process.env.KAFKA_PASSWORD!,
-    mechanism: "plain",
-  },
-});
+export const kafka = () => {
+  console.log(fs.readFileSync(path.join(__dirname, "Kafka.pem"), "utf-8"));
+  return new Kafka({
+    clientId: `api-server`,
+    brokers: [process.env.KAFKA_BROKER!],
+    ssl: {
+      ca: [fs.readFileSync(path.join(__dirname, "Kafka.pem"), "utf-8")],
+    },
+    sasl: {
+      username: process.env.KAFKA_USERNAME!,
+      password: process.env.KAFKA_PASSWORD!,
+      mechanism: "plain",
+    },
+  });
+};
 
 // ClickHouse Client configuration
 export const clickhouseClient = createClient({

@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  output   = "../src/generated"
 }
 
 datasource db {
@@ -71,16 +71,6 @@ model Deployment {
   status    DEPLOYMENT_STATUS @default(IDLE)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
-  logs      Log[]
 
   @@index([status])
-}
-
-model Log {
-  id           String     @id @default(uuid())
-  deploymentId String
-  deployment   Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
-  message      String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
 }

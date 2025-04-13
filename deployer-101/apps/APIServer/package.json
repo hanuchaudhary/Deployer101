@@ -23,6 +23,7 @@
     "kafkajs": "^2.2.4",
     "random-word-slugs": "^0.1.7",
     "socket.io": "^4.8.1",
-    "tsc-watch": "^6.2.1"
+    "tsc-watch": "^6.2.1",
+    "uuid": "^11.1.0"
   }
 }
