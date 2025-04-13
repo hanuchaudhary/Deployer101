@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start" : "tsc -b && node dist/index.js"
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\""
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,7 @@
     "@types/express": "^5.0.1",
     "@types/http-proxy": "^1.17.16",
     "express": "^5.1.0",
-    "http-proxy": "^1.18.1"
+    "http-proxy": "^1.18.1",
+    "tsc-watch": "^6.2.1"
   }
 }
