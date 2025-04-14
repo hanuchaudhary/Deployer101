@@ -19,6 +19,8 @@ import { Badge } from "@/components/ui/badge";
 import { useSearchParams } from "next/navigation";
 import { useGithubSingleRepo } from "@/hooks/useGithubRepos";
 import { DEPLOYMENT_STATUS } from "@repo/common/types";
+import { generateRandomSubdomain } from "@/lib/generateRandomSlug";
+import { useDomain } from "@/hooks/useDomain";
 
 export default function DeployProject() {
   const searchParams = useSearchParams();
@@ -29,13 +31,12 @@ export default function DeployProject() {
     owner as string,
     repo as string
   );
-  console.log("singleRepo", singleRepo);
 
   // State for domain selection
   const [domainType, setDomainType] = useState("generated");
-  const [customDomain, setCustomDomain] = useState("");
-  const [generatedDomain, setGeneratedDomain] = useState(
-    "project-name.vercel.app"
+  const [customDomain, setCustomDomain] = useState(singleRepo?.name || "");
+  const [generatedDomain, setGeneratedDomain] = useState<string>(
+    singleRepo?.name || ""
   );
 
   // State for deployment
@@ -43,20 +44,33 @@ export default function DeployProject() {
   const [deploymentStatus, setDeploymentStatus] = useState<DEPLOYMENT_STATUS>(
     DEPLOYMENT_STATUS.IDLE
   );
+  const { domainResponse, loading: domainLoading, setDomain } = useDomain();
   const [logs, setLogs] = useState<string[]>([]);
 
   // Mock repository data based on repo ID
   const repoData = {
-    id: "singleRepo",
-    name: "singleRepo",
-    fullName: "CrosspostHUb",
+    id: singleRepo?.name,
+    name: singleRepo?.name,
+    fullName: singleRepo?.name,
+    description: singleRepo?.description,
+    avatar: singleRepo?.avatar,
+    isPrivate: singleRepo?.isPrivate,
+    defaultBranch: singleRepo?.defaultBranch,
+    updatedAt: singleRepo?.updatedAt,
+    url: singleRepo?.url,
   };
 
   // Generate a random domain when component mounts
   useEffect(() => {
-    const randomString = Math.random().toString(36).substring(2, 8);
-    setGeneratedDomain(`${repoData.name}-${randomString}.vercel.app`);
-  }, [repoData.name]);
+    const randomSubDomain = generateRandomSubdomain();
+    setGeneratedDomain(randomSubDomain);
+  }, []);
+
+  // Function to generate a new random domain
+  const generateNewDomain = () => {
+    const randomSubDomain = generateRandomSubdomain();
+    setGeneratedDomain(randomSubDomain);
+  };
 
   // Handle deployment
   const handleDeploy = () => {
@@ -97,12 +111,6 @@ export default function DeployProject() {
     }, 1500);
 
     return () => clearInterval(interval);
-  };
-
-  // Generate a new random domain
-  const generateNewDomain = () => {
-    const randomString = Math.random().toString(36).substring(2, 8);
-    setGeneratedDomain(`${repoData.name}-${randomString}.vercel.app`);
   };
 
   return (
@@ -167,10 +175,28 @@ export default function DeployProject() {
                     </Label>
                     <Input
                       placeholder="your-domain.com"
-                      value={customDomain}
-                      onChange={(e) => setCustomDomain(e.target.value)}
+                      onChange={async (e) => {
+                        try {
+                          setDomain(e.target.value);
+                        } catch (error) {
+                          console.log(error);
+                        }
+                      }}
                       disabled={domainType !== "custom"}
                     />
+                    <div>
+                      {domainLoading ? (
+                        <span className="text-sm text-muted-foreground">
+                          Searching if domain is available...
+                        </span>
+                      ) : (
+                        domainResponse && (
+                          <span className="text-sm text-green-500">
+                            {domainResponse}
+                          </span>
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
               </RadioGroup>

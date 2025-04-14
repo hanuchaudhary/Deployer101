@@ -25,7 +25,7 @@ projectRouter.post("/domain", async (req: Request, res: Response) => {
     });
 
     if (project) {
-      res.status(400).json({ error: "Subdomain already exists" });
+      res.status(400).json({ message: "Subdomain already exists" });
       return;
     }
 

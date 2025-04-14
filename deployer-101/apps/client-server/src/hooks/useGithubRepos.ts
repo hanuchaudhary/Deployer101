@@ -28,8 +28,19 @@ export const useGithubRepos = () => {
   return { repos, loading, setLimit };
 };
 
+interface singleRepoType {
+  name: string;
+  url: string;
+  githubRepoUrl: string;
+  description: string;
+  avatar: string;
+  isPrivate: boolean;
+  defaultBranch: string;
+  updatedAt: string;
+}
+
 export const useGithubSingleRepo = (owner: string, repoName: string) => {
-  const [singleRepo, setSingleRepo] = useState<any[]>([]);
+  const [singleRepo, setSingleRepo] = useState<singleRepoType>();
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     setLoading(true);
