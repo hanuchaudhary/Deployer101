@@ -1,7 +1,7 @@
 import { RunTaskCommand } from "@aws-sdk/client-ecs";
 import { Request, Response, Router } from "express";
 import { generateSlug } from "random-word-slugs";
-import { ecsClient } from "../config/config";
+import { clickhouseClient, ecsClient } from "../config/config";
 import { projectSchema } from "@repo/common/validations";
 import { prisma } from "@repo/database/client";
 
@@ -49,12 +49,23 @@ projectRouter.post("/", async (req: Request, res: Response) => {
     const projectNameSlug = subDomain ? subDomain : generateSlug(2);
     console.log(`Generated Slug: ${projectNameSlug}`);
 
+    // Check if the subdomain is available
+    const existingProject = await prisma.project.findUnique({
+      where: {
+        subDomain: projectNameSlug,
+      },
+    });
+    if (existingProject) {
+      res.status(400).json({ error: "Subdomain already exists" });
+      return;
+    }
+
     const project = await prisma.project.create({
       data: {
         githubRepoUrl,
         subDomain: projectNameSlug,
         name: projectNameSlug, // TODO: maybe github project name should decide while creating frontend
-        userId: "a291098c-c56d-463f-888f-5b247187af7f", //TODO: get userId from auth middleware
+        userId: "139aeb6d-32ee-4749-9200-61f1edcaf147", //TODO: get userId from auth middleware
       },
     });
 
@@ -162,7 +173,7 @@ projectRouter.post("/deploy", async (req: Request, res: Response) => {
               {
                 name: "KAFKA_BROKER",
                 value: process.env.KAFKA_BROKER,
-              }
+              },
             ],
           },
         ],
@@ -189,10 +200,144 @@ projectRouter.post("/deploy", async (req: Request, res: Response) => {
       deploymentId: deployment.id,
       message: "Deployment started successfully",
       status: "IN_PROGRESS",
-      url : `http://${subDomain}.localhost:8000`,
+      url: `http://${subDomain}.localhost:8000`,
     });
   } catch (error) {
     console.log("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// GET-ROUTE: get | for getting a project by ID
+projectRouter.get("/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Project ID is required" });
+      return;
+    }
+
+    const project = await prisma.project.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!project) {
+      res.status(404).json({ error: "Project not found" });
+      return;
+    }
+
+    res.status(200).json(project);
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// GET-ROUTE: get-all | for getting all projects
+projectRouter.get("/", async (req: Request, res: Response) => {
+  try {
+    const projects = await prisma.project.findMany();
+    res.status(200).json(projects);
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// DELETE-ROUTE: delete | for deleting a project by ID
+projectRouter.delete("/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Project ID is required" });
+      return;
+    }
+
+    const project = await prisma.project.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!project) {
+      res.status(404).json({ error: "Project not found" });
+      return;
+    }
+
+    await prisma.project.delete({
+      where: {
+        id,
+      },
+    });
+
+    res.status(200).json({ message: "Project deleted successfully" });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// GET-ROUTE: get-deployments | for getting all deployments of a project
+projectRouter.get("/:id/deployments", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Project ID is required" });
+      return;
+    }
+
+    const project = await prisma.project.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        deployments: true, // Include the deployments relation
+      },
+    });
+    if (!project) {
+      res.status(404).json({ error: "Project not found" });
+      return;
+    }
+
+    res.status(200).json({ deployments: project.deployments || [] });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// GET-ROUTE: get-logs | for getting logs of a deployment
+projectRouter.get("/logs/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "Deployment ID is required" });
+      return;
+    }
+    const deployment = await prisma.deployment.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!deployment) {
+      res.status(404).json({ error: "Deployment not found" });
+      return;
+    }
+    // Fetch logs from ClickHouse using the deployment ID
+    const logs = await clickhouseClient.query({
+      query: `SELECT event_id, deployment_id, log, timestamp FROM log_events WHERE deployment_id = {deployment_id : String}`,
+      format: "JSONEachRow",
+      query_params: {
+        deployment_id: deployment.id,
+      },
+    });
+
+    const finalLogs = await logs.json();
+
+    console.log("Logs:", finalLogs);
+    res.status(200).json(finalLogs);
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({ error: "Internal Server Error", dbError: error });
   }
 });
