@@ -4,8 +4,10 @@ import { generateSlug } from "random-word-slugs";
 import { clickhouseClient, ecsClient } from "../config/config";
 import { projectSchema } from "@repo/common/validations";
 import { prisma } from "@repo/database/client";
+import { authMiddleware } from "../middleware";
 
 export const projectRouter: Router = Router();
+projectRouter.use(authMiddleware);
 
 // POST-ROUTE: domain | for checking if the subdomain is available
 projectRouter.post("/domain", async (req: Request, res: Response) => {

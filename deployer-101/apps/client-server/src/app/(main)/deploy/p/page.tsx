@@ -7,7 +7,6 @@ import { ArrowLeft, Check, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Navbar } from "@/components/Landing/Navbar";
 import {
   Card,
   CardContent,
@@ -17,12 +16,21 @@ import {
 } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
+import { useSearchParams } from "next/navigation";
+import { useGithubSingleRepo } from "@/hooks/useGithubRepos";
+import { DEPLOYMENT_STATUS } from "@repo/common/types";
 
-export default function DeployProject({
-  params,
-}: {
-  params: { repo: string };
-}) {
+export default function DeployProject() {
+  const searchParams = useSearchParams();
+  const owner = searchParams.get("owner");
+  const repo = searchParams.get("repo");
+
+  const { loading, singleRepo } = useGithubSingleRepo(
+    owner as string,
+    repo as string
+  );
+  console.log("singleRepo", singleRepo);
+
   // State for domain selection
   const [domainType, setDomainType] = useState("generated");
   const [customDomain, setCustomDomain] = useState("");
@@ -32,34 +40,16 @@ export default function DeployProject({
 
   // State for deployment
   const [isDeploying, setIsDeploying] = useState(false);
-  const [deploymentStatus, setDeploymentStatus] = useState<
-    "idle" | "building" | "deploying" | "complete"
-  >("idle");
+  const [deploymentStatus, setDeploymentStatus] = useState<DEPLOYMENT_STATUS>(
+    DEPLOYMENT_STATUS.IDLE
+  );
   const [logs, setLogs] = useState<string[]>([]);
 
   // Mock repository data based on repo ID
   const repoData = {
-    id: params.repo,
-    name:
-      params.repo === "repo1"
-        ? "next-blog"
-        : params.repo === "repo2"
-        ? "portfolio-site"
-        : params.repo === "repo3"
-        ? "e-commerce"
-        : params.repo === "repo4"
-        ? "dashboard-ui"
-        : "api-service",
-    fullName:
-      params.repo === "repo1"
-        ? "user/next-blog"
-        : params.repo === "repo2"
-        ? "user/portfolio-site"
-        : params.repo === "repo3"
-        ? "user/e-commerce"
-        : params.repo === "repo4"
-        ? "user/dashboard-ui"
-        : "user/api-service",
+    id: "singleRepo",
+    name: "singleRepo",
+    fullName: "CrosspostHUb",
   };
 
   // Generate a random domain when component mounts
@@ -71,7 +61,7 @@ export default function DeployProject({
   // Handle deployment
   const handleDeploy = () => {
     setIsDeploying(true);
-    setDeploymentStatus("building");
+    setDeploymentStatus(DEPLOYMENT_STATUS.READY);
 
     // Simulate deployment process with logs
     const deploymentSteps = [
@@ -92,11 +82,11 @@ export default function DeployProject({
         setLogs((prev) => [...prev, deploymentSteps[step]]);
 
         if (step === 2) {
-          setDeploymentStatus("building");
+          setDeploymentStatus(DEPLOYMENT_STATUS.IN_PROGRESS);
         } else if (step === 6) {
-          setDeploymentStatus("deploying");
+          setDeploymentStatus(DEPLOYMENT_STATUS.IN_PROGRESS);
         } else if (step === deploymentSteps.length - 1) {
-          setDeploymentStatus("complete");
+          setDeploymentStatus(DEPLOYMENT_STATUS.SUCCESS);
           clearInterval(interval);
         }
 
@@ -117,7 +107,6 @@ export default function DeployProject({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
       <main className="flex-1 container mx-auto py-6">
         <div className="mb-6">
           <Button variant="ghost" size="sm" asChild className="mb-4">
@@ -231,7 +220,7 @@ export default function DeployProject({
                 Deploy your project to production
               </CardDescription>
             </div>
-            {deploymentStatus === "complete" ? (
+            {deploymentStatus === DEPLOYMENT_STATUS.SUCCESS ? (
               <Button variant="outline" asChild>
                 <a
                   href={`https://${
@@ -248,11 +237,11 @@ export default function DeployProject({
                 {isDeploying ? (
                   <>
                     <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    {deploymentStatus === "building"
+                    {deploymentStatus === DEPLOYMENT_STATUS.IN_PROGRESS
                       ? "Building..."
-                      : deploymentStatus === "deploying"
-                      ? "Deploying..."
-                      : "Processing..."}
+                      : deploymentStatus === DEPLOYMENT_STATUS.QUEUED
+                        ? "Deploying..."
+                        : "Processing..."}
                   </>
                 ) : (
                   "Deploy"
@@ -267,18 +256,20 @@ export default function DeployProject({
                 <div className="flex items-center gap-2">
                   <Badge
                     variant={
-                      deploymentStatus === "complete" ? "default" : "outline"
+                      deploymentStatus === DEPLOYMENT_STATUS.SUCCESS
+                        ? "default"
+                        : "outline"
                     }
                   >
-                    {deploymentStatus === "idle"
+                    {deploymentStatus === DEPLOYMENT_STATUS.IDLE
                       ? "Waiting"
-                      : deploymentStatus === "building"
-                      ? "Building"
-                      : deploymentStatus === "deploying"
-                      ? "Deploying"
-                      : "Completed"}
+                      : deploymentStatus === DEPLOYMENT_STATUS.IN_PROGRESS
+                        ? "Building"
+                        : deploymentStatus === DEPLOYMENT_STATUS.QUEUED
+                          ? "Deploying"
+                          : "Completed"}
                   </Badge>
-                  {deploymentStatus === "complete" && (
+                  {deploymentStatus === DEPLOYMENT_STATUS.SUCCESS && (
                     <span className="text-sm text-muted-foreground flex items-center">
                       <Check className="h-4 w-4 mr-1 text-green-500" />
                       Deployment successful
@@ -295,9 +286,10 @@ export default function DeployProject({
                       {log}
                     </div>
                   ))}
-                  {isDeploying && deploymentStatus !== "complete" && (
-                    <div className="animate-pulse">▋</div>
-                  )}
+                  {isDeploying &&
+                    deploymentStatus !== DEPLOYMENT_STATUS.SUCCESS && (
+                      <div className="animate-pulse">▋</div>
+                    )}
                 </div>
               </div>
             </CardContent>

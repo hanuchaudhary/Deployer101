@@ -20,16 +20,6 @@ import { HTTP_BACKEND_URL } from "@/config";
 export function Navbar() {
   const pathname = usePathname();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const url = `${HTTP_BACKEND_URL}/api/v1/project`;
-      console.log("Fetching user data from:", url);
-      const res = await axios.get(url);
-      console.log(res.data);
-    };
-    fetchUser();
-  }, []);
-
   return (
     <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-14 items-center px-10">

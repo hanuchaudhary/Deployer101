@@ -8,7 +8,6 @@ import { ArrowLeft, Globe, Terminal, Settings, GitBranch, Clock, ExternalLink, C
 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Navbar } from "@/components/Landing/Navbar"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -43,7 +42,6 @@ export default function DeploymentDetails({ params }: { params: { id: string } }
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
       <main className="flex-1 container mx-auto py-6">
         <div className="mb-6">
           <Button variant="ghost" size="sm" asChild className="mb-4">

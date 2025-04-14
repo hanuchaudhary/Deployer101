@@ -18,6 +18,7 @@
   },
   "exports": {
     "./validations": "./src/validations.ts",
-    "./config": "./src/config.ts"
+    "./config": "./src/config.ts",
+    "./types" : "./src/types.ts"
   }
 }
