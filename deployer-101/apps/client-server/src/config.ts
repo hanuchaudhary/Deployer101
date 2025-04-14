@@ -1,0 +1,1 @@
+export const HTTP_BACKEND_URL = process.env.NEXT_PUBLIC_HTTP_BACKEND_URL || "http://localhost:9000";

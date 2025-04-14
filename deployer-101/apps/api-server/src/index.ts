@@ -2,9 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 import { projectRouter } from "./routes/project.routes";
 import { userRouter } from "./routes/user.routes";
-import { clickhouseClient, kafkaClient } from "./config/config";
-import { v4 as uuidv4 } from "uuid";
 import { initKafkaConsumer } from "./config/kafka";
+import cors from "cors";
+import { webhookRouter } from "./routes/webhook.route";
 dotenv.config();
 
 const LOCAL_ENVS = [
@@ -23,17 +23,17 @@ LOCAL_ENVS.forEach((env) => {
   }
 });
 
-initKafkaConsumer().catch((error) => {
-  console.error("Error initializing Kafka consumer:", error);
-});
+initKafkaConsumer()
 
 // Express server setup
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 // Routes
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/project", projectRouter);
+app.use("/api/v1/webhook", webhookRouter);
 
 // Listening on the specified port
 app.listen(process.env.PORT || 9000, () => {
