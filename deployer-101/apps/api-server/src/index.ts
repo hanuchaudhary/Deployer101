@@ -23,7 +23,7 @@ LOCAL_ENVS.forEach((env) => {
   }
 });
 
-// initKafkaConsumer()
+initKafkaConsumer()
 
 // Express server setup
 const app = express();

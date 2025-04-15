@@ -29,32 +29,86 @@ import { DEPLOYMENT_STATUS } from "@repo/common/types";
 import { useDomain } from "@/hooks/useDomain";
 import { useSingleProjectHook } from "@/hooks/useProjectHook";
 import { Progress } from "@/components/ui/progress";
+import axios from "axios";
+import { HTTP_BACKEND_URL } from "@/config";
+import { useAuth } from "@clerk/nextjs";
+
+type LogEvent = {
+  event_id: string;
+  deployment_id: string;
+  log: string;
+  timestamp: string; // or `Date` if you parse it
+};
 
 export default function DeployProject({
   params,
 }: {
   params: { projectId: string };
 }) {
-  const { fetchProject, loading, project } = useSingleProjectHook(
-    params.projectId
-  );
+  
+  const { loading, project } = useSingleProjectHook(params.projectId);
+  const [generatedDomain, setGeneratedDomain] = useState<string>("");
 
-  // State for domain selection
-  const [domainType, setDomainType] = useState("generated");
-  const [customDomain, setCustomDomain] = useState(project?.subDomain);
-  const [generatedDomain, setGeneratedDomain] = useState<string>(
-    project?.name || ""
-  );
+  const { getToken } = useAuth();
 
-  // State for deployment
   const [isDeploying, setIsDeploying] = useState(false);
   const [deploymentStatus, setDeploymentStatus] = useState<DEPLOYMENT_STATUS>(
     DEPLOYMENT_STATUS.IDLE
   );
-  const [deploymentProgress, setDeploymentProgress] = useState(0);
-  const { domainResponse, loading: domainLoading, setDomain } = useDomain();
-  const [logs, setLogs] = useState<string[]>([]);
 
+  const [deploymentId, setDeploymentId] = useState<string>("");
+  const [logs, setLogs] = useState<LogEvent[]>([]);
+
+  const fetchLogs = async () => {
+    const token = await getToken();
+    try {
+      const response = await axios.get(
+        `${HTTP_BACKEND_URL}/api/v1/project/logs/${deploymentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = response.data;
+      setLogs(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!deploymentId) return;
+
+    const interval = setInterval(() => {
+      fetchLogs();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [deploymentId]); // only start polling when deploymentId is available
+
+  const handleDeploy = async () => {
+    const token = await getToken();
+    try {
+      setIsDeploying(true);
+      const response = await axios.post(
+        `${HTTP_BACKEND_URL}/api/v1/project/deploy`,
+        {
+          projectId: params.projectId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = response.data;
+      console.log(deploymentId);
+      setDeploymentId(data.deploymentId);
+      setGeneratedDomain(data.url);
+    } catch (error) {}
+  };
   return (
     <div className="flex min-h-screen flex-col bg-black text-white">
       <main className="flex-1 container mx-auto py-6 px-4 md:px-6">
@@ -190,100 +244,59 @@ export default function DeployProject({
                 </CardDescription>
               </div>
             </div>
-            {deploymentStatus === DEPLOYMENT_STATUS.SUCCESS ? (
-              <Button
-                className="bg-white text-black hover:bg-neutral-200 transition-colors"
-                asChild
+            <Button
+              className="bg-white text-black hover:bg-neutral-200 transition-colors"
+              asChild
+            >
+              <a
+                href={generatedDomain}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <a
-                  href={`https://${domainType === "custom" ? customDomain : generatedDomain}.vercel.app`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Visit Site
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
-            ) : (
-              <Button
-                // onClick={handleDeploy}
-                disabled={isDeploying}
-                className={
-                  isDeploying
-                    ? "bg-neutral-800 text-neutral-400"
-                    : "bg-white text-black hover:bg-neutral-200 transition-colors"
-                }
-              >
-                {isDeploying ? (
-                  <>
-                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    {deploymentStatus === DEPLOYMENT_STATUS.IN_PROGRESS
-                      ? "Building..."
-                      : deploymentStatus === DEPLOYMENT_STATUS.QUEUED
-                        ? "Deploying..."
-                        : "Processing..."}
-                  </>
-                ) : (
-                  "Deploy"
-                )}
-              </Button>
-            )}
+                Visit Site
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+
+            <Button
+              onClick={handleDeploy}
+              disabled={isDeploying}
+              className={
+                isDeploying
+                  ? "bg-neutral-800 text-neutral-400"
+                  : "bg-white text-black hover:bg-neutral-200 transition-colors"
+              }
+            >
+              {isDeploying ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  {deploymentStatus === DEPLOYMENT_STATUS.IN_PROGRESS
+                    ? "Building..."
+                    : deploymentStatus === DEPLOYMENT_STATUS.QUEUED
+                      ? "Deploying..."
+                      : "Processing..."}
+                </>
+              ) : (
+                "Deploy"
+              )}
+            </Button>
           </CardHeader>
 
-          {isDeploying && (
+          {logs && (
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Badge
-                    variant="outline"
-                    className={
-                      deploymentStatus === DEPLOYMENT_STATUS.SUCCESS
-                        ? "bg-green-500/10 text-green-500 border-green-500/20"
-                        : "bg-[#222] text-neutral-300 border-[#333]"
-                    }
-                  >
-                    {deploymentStatus === DEPLOYMENT_STATUS.IDLE
-                      ? "Waiting"
-                      : deploymentStatus === DEPLOYMENT_STATUS.IN_PROGRESS
-                        ? "Building"
-                        : deploymentStatus === DEPLOYMENT_STATUS.QUEUED
-                          ? "Deploying"
-                          : "Completed"}
-                  </Badge>
-                  {deploymentStatus === DEPLOYMENT_STATUS.SUCCESS && (
-                    <span className="text-sm text-green-500 flex items-center">
-                      <Check className="h-4 w-4 mr-1" />
-                      Deployment successful
-                    </span>
-                  )}
-                </div>
-
-                <div className="w-full">
-                  <Progress
-                    value={deploymentProgress}
-                    className="h-1 bg-[#222]"
-                  />
-                  <div className="flex justify-between mt-1 text-xs text-neutral-400">
-                    <span>Build</span>
-                    <span>Deploy</span>
-                    <span>Complete</span>
+              <div className="bg-[#0A0A0A] border border-[#222] text-white p-4 rounded-md font-mono text-sm overflow-auto max-h-[300px]">
+                {logs.map((log, index) => (
+                  <div key={index} className="mb-1">
+                    <span className="text-neutral-500">
+                      [{new Date(log.timestamp).toLocaleTimeString()}]
+                    </span>{" "}
+                    {log.log}
                   </div>
-                </div>
-
-                <div className="bg-[#0A0A0A] border border-[#222] text-white p-4 rounded-md font-mono text-sm overflow-auto max-h-[300px]">
-                  {logs.map((log, index) => (
-                    <div key={index} className="mb-1">
-                      <span className="text-neutral-500">
-                        [{new Date().toLocaleTimeString()}]
-                      </span>{" "}
-                      {log}
-                    </div>
-                  ))}
-                  {isDeploying &&
-                    deploymentStatus !== DEPLOYMENT_STATUS.SUCCESS && (
-                      <div className="animate-pulse">▋</div>
-                    )}
-                </div>
+                ))}
+                {isDeploying &&
+                  deploymentStatus !== DEPLOYMENT_STATUS.SUCCESS && (
+                    <div className="animate-pulse">▋</div>
+                  )}
               </div>
             </CardContent>
           )}

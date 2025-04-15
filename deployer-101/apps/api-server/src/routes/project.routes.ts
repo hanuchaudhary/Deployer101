@@ -97,7 +97,6 @@ projectRouter.post("/", async (req: Request, res: Response) => {
       },
     });
 
-    console.log("Project created:", project);
     res.status(201).json(project);
   } catch (error) {
     console.log("Error:", error);
@@ -118,6 +117,7 @@ projectRouter.post("/deploy", async (req: Request, res: Response) => {
     const project = await prisma.project.findUnique({
       where: {
         id: projectId,
+        userId : USER_ID
       },
     });
     if (!project) {
@@ -366,7 +366,7 @@ projectRouter.get("/logs/:id", async (req: Request, res: Response) => {
 
     const finalLogs = await logs.json();
 
-    console.log("Logs:", finalLogs);
+    console.log("Logs: for ",deployment.id,finalLogs);
     res.status(200).json(finalLogs);
   } catch (error) {
     console.log("Error:", error);
