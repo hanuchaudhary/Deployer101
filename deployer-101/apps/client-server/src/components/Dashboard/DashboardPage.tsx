@@ -23,68 +23,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { useProjectHook } from "@/hooks/useProjectHook";
 
-export interface UserType {
-  id: string;
-  email: string;
-  name: string | null;
-}
-
-export interface DeploymentType {
-  id: string;
-  projectId: string;
-  url: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface ProjectType {
-  id: string;
-  name: string;
-  githubRepoUrl: string;
-  subDomain: string;
-  customDomain: string;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: string;
-  user: UserType;
-  deployments: DeploymentType[];
-}
-
 export default function Dashboard() {
   const { projects, loading } = useProjectHook();
-
-  // Mock data for repositories
-  const repositories = [
-    {
-      id: "1",
-      name: "Next.js Blog",
-      url: "https://github.com/user/nextjs-blog",
-      branch: "main",
-      lastDeployed: "2 hours ago",
-      status: "Production",
-    },
-    {
-      id: "2",
-      name: "E-commerce Site",
-      url: "https://github.com/user/ecommerce",
-      branch: "main",
-      lastDeployed: "1 day ago",
-      status: "Production",
-    },
-    {
-      id: "3",
-      name: "Portfolio",
-      url: "https://github.com/user/portfolio",
-      branch: "main",
-      lastDeployed: "3 days ago",
-      status: "Production",
-    },
-  ];
-
-  // Check if there are any projects
   const hasProjects = projects && projects.length > 0;
-  // For demo purposes, you can toggle this to see different views
-  // const hasProjects = false;
+  console.log("hasProjects", hasProjects);
+  
 
   if (loading) {
     return (
@@ -206,30 +149,30 @@ export default function Dashboard() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {repositories.map((repo) => (
-            <Card key={repo.id} className="overflow-hidden border-2">
+          {projects.map((project) => (
+            <Card key={project.id} className="overflow-hidden border-2">
               <CardHeader className="pb-2">
                 <CardTitle className="text-xl">
-                  <Link href={`/deploy/${repo.id}`} className="hover:underline">
-                    {repo.name}
+                  <Link href={`/deploy/${project.id}`} className="hover:underline">
+                    {project.name}
                   </Link>
                 </CardTitle>
                 <CardDescription className="flex items-center text-xs">
                   <GitBranch className="mr-1 h-3 w-3" />
-                  {repo.branch}
+                  {project.githubRepoUrl}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pb-2">
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Clock className="mr-1 h-4 w-4" />
-                  <span>Last deployed {repo.lastDeployed}</span>
+                  <span>Last deployed {new Date(project.createdAt).toLocaleString()}</span>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between border-t pt-4">
-                <span className="text-xs font-medium">{repo.status}</span>
+                <span className="text-xs font-medium">{project.name}</span>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={`/dashboard/${repo.id}`}>
+                    <Link href={`/dashboard/${project.id}`}>
                       <ExternalLink className="mr-1 h-3 w-3" />
                       View
                     </Link>

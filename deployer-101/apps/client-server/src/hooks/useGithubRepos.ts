@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export const useGithubRepos = () => {
-  const [repos, setRepos] = useState<any[]>([]);
+  const [repos, setRepos] = useState<RepoType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [limit, setLimit] = useState<number>(10);
 
@@ -28,7 +28,7 @@ export const useGithubRepos = () => {
   return { repos, loading, setLimit };
 };
 
-interface singleRepoType {
+export interface RepoType {
   name: string;
   url: string;
   githubRepoUrl: string;
@@ -38,31 +38,3 @@ interface singleRepoType {
   defaultBranch: string;
   updatedAt: string;
 }
-
-export const useGithubSingleRepo = (owner: string, repoName: string) => {
-  const [singleRepo, setSingleRepo] = useState<singleRepoType>();
-  const [loading, setLoading] = useState<boolean>(false);
-  useEffect(() => {
-    setLoading(true);
-    const fetchRepo = async () => {
-      try {
-        const response = await axios.get(`/api/github`, {
-          params: {
-            owner,
-            name: repoName,
-          },
-        });
-        const repo = await response.data;
-        setSingleRepo(repo);
-      } catch (error) {
-        console.error("There was an error fetching the data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRepo();
-  }, []);
-
-  return { singleRepo, loading };
-};

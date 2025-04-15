@@ -15,6 +15,6 @@ export const projectSchema = z.object({
     .regex(
       /^[a-z0-9-]+$/,
       "Subdomain can only contain lowercase letters, numbers, and hyphens"
-    ),
-  name: z.string().optional(), // Can still be optional, maybe later populated from GitHub
+    ).optional(),
+  projectName: z.string().optional(), // Can still be optional, maybe later populated from GitHub
 });

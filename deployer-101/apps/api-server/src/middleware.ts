@@ -53,8 +53,6 @@ export async function authMiddleware(
         .json({ error: "Unauthorized", message: "Invalid token" });
       return;
     }
-
-    console.log("Decoded token:", decodedToken);
     
     const userId = decodedToken.payload.sub;
     if (!userId) {

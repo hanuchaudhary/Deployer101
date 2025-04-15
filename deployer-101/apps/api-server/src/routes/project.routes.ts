@@ -9,6 +9,8 @@ import { authMiddleware } from "../middleware";
 export const projectRouter: Router = Router();
 projectRouter.use(authMiddleware);
 
+const USER_ID = "8362bceb-3cf6-4f8c-b4e2-662ea138e998";
+
 // POST-ROUTE: domain | for checking if the subdomain is available
 projectRouter.post("/domain", async (req: Request, res: Response) => {
   try {
@@ -39,6 +41,7 @@ projectRouter.post("/domain", async (req: Request, res: Response) => {
 // POST-ROUTE: create | for creating a new project
 projectRouter.post("/", async (req: Request, res: Response) => {
   try {
+    const { userId } = req;
     const { error, data } = projectSchema.safeParse(req.body);
     if (error) {
       console.log("Validation Error:", error);
@@ -46,7 +49,7 @@ projectRouter.post("/", async (req: Request, res: Response) => {
       return;
     }
 
-    const { githubRepoUrl, subDomain } = data;
+    const { githubRepoUrl, subDomain, projectName } = data;
 
     const projectNameSlug = subDomain ? subDomain : generateSlug(2);
     console.log(`Generated Slug: ${projectNameSlug}`);
@@ -62,12 +65,27 @@ projectRouter.post("/", async (req: Request, res: Response) => {
       return;
     }
 
+    // Check if the project already exists for the user with the same repo URL
+    const existingProjectForUser = await prisma.project.findFirst({
+      where: {
+        userId: USER_ID, //TODO: get userId from auth middleware ✅
+        githubRepoUrl: githubRepoUrl,
+      },
+    });
+
+    if (existingProjectForUser) {
+      res
+        .status(400)
+        .json({ error: "Project already for this Github Repositories" });
+      return;
+    }
+
     const project = await prisma.project.create({
       data: {
         githubRepoUrl,
         subDomain: projectNameSlug,
-        name: projectNameSlug, // TODO: maybe github project name should decide while creating frontend
-        userId: "139aeb6d-32ee-4749-9200-61f1edcaf147", //TODO: get userId from auth middleware
+        name: projectName || "", // TODO: maybe github project name should decide while creating frontend
+        userId: USER_ID, //TODO: get userId from auth middleware ✅
       },
     });
 
@@ -99,7 +117,7 @@ projectRouter.post("/deploy", async (req: Request, res: Response) => {
       return;
     }
 
-    const { githubRepoUrl, subDomain } = project;
+    const { githubRepoUrl, subDomain, customDomain } = project;
 
     // Create deployemebt for the project
     console.log("Creating deployment for project:", projectId);
@@ -202,7 +220,7 @@ projectRouter.post("/deploy", async (req: Request, res: Response) => {
       deploymentId: deployment.id,
       message: "Deployment started successfully",
       status: "IN_PROGRESS",
-      url: `http://${subDomain}.localhost:8000`,
+      url: `http://${customDomain ? customDomain : subDomain}.localhost:8000`,
     });
   } catch (error) {
     console.log("Error:", error);
@@ -239,7 +257,11 @@ projectRouter.get("/:id", async (req: Request, res: Response) => {
 // GET-ROUTE: get-all | for getting all projects
 projectRouter.get("/", async (req: Request, res: Response) => {
   try {
-    const projects = await prisma.project.findMany();
+    const projects = await prisma.project.findMany({
+      where: {
+        userId: USER_ID, //TODO: get userId from auth middleware ✅
+      },
+    });
     res.status(200).json(projects);
   } catch (error) {
     console.log("Error:", error);

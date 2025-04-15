@@ -17,26 +17,29 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { useSearchParams } from "next/navigation";
-import { useGithubSingleRepo } from "@/hooks/useGithubRepos";
 import { DEPLOYMENT_STATUS } from "@repo/common/types";
 import { generateRandomSubdomain } from "@/lib/generateRandomSlug";
 import { useDomain } from "@/hooks/useDomain";
+import { useSingleProjectHook } from "@/hooks/useProjectHook";
 
-export default function DeployProject() {
-  const searchParams = useSearchParams();
-  const owner = searchParams.get("owner");
-  const repo = searchParams.get("repo");
+export default function DeployProject({
+  params,
+}: {
+  params: { projectId: string };
+}) {
+  console.log("params", params);
 
-  const { loading, singleRepo } = useGithubSingleRepo(
-    owner as string,
-    repo as string
+  const { fetchProject, loading, project } = useSingleProjectHook(
+    params.projectId
   );
+
+  console.log("project", project);
 
   // State for domain selection
   const [domainType, setDomainType] = useState("generated");
-  const [customDomain, setCustomDomain] = useState(singleRepo?.name || "");
+  const [customDomain, setCustomDomain] = useState(project?.subDomain);
   const [generatedDomain, setGeneratedDomain] = useState<string>(
-    singleRepo?.name || ""
+    project?.name || ""
   );
 
   // State for deployment
@@ -46,19 +49,6 @@ export default function DeployProject() {
   );
   const { domainResponse, loading: domainLoading, setDomain } = useDomain();
   const [logs, setLogs] = useState<string[]>([]);
-
-  // Mock repository data based on repo ID
-  const repoData = {
-    id: singleRepo?.name,
-    name: singleRepo?.name,
-    fullName: singleRepo?.name,
-    description: singleRepo?.description,
-    avatar: singleRepo?.avatar,
-    isPrivate: singleRepo?.isPrivate,
-    defaultBranch: singleRepo?.defaultBranch,
-    updatedAt: singleRepo?.updatedAt,
-    url: singleRepo?.url,
-  };
 
   // Generate a random domain when component mounts
   useEffect(() => {
@@ -123,7 +113,7 @@ export default function DeployProject() {
               Back to Import
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold">Deploy {repoData.fullName}</h1>
+          <h1 className="text-3xl font-bold">Deploy {project?.name}</h1>
           <p className="text-muted-foreground mt-2">
             Configure your deployment settings
           </p>

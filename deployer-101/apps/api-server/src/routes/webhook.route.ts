@@ -57,6 +57,7 @@ webhookRouter.post("/", async (req: Request, res: Response) => {
             clerkId: id,
           },
           update: {
+            id : id,
             clerkId: id,
             name: `${event.data.first_name ?? ""} ${event.data.last_name ?? ""}`.trim(),
             email: event.data.email_addresses[0].email_address,
@@ -64,6 +65,7 @@ webhookRouter.post("/", async (req: Request, res: Response) => {
             githubUsername : event.data.username,
           },
           create: {
+            id : id,
             clerkId: id,
             name: `${event.data.first_name ?? ""} ${event.data.last_name ?? ""}`.trim(),
             email: event.data.email_addresses[0].email_address,
