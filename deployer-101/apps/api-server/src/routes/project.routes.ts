@@ -14,24 +14,27 @@ const USER_ID = "8362bceb-3cf6-4f8c-b4e2-662ea138e998";
 // POST-ROUTE: domain | for checking if the subdomain is available
 projectRouter.post("/domain", async (req: Request, res: Response) => {
   try {
-    const { subDomain } = req.body;
-    if (!subDomain) {
-      res.status(400).json({ error: "Subdomain is required" });
+    const { domain } = req.body;
+    if (!domain) {
+      res.status(400).json({ error: "Domain is required" });
       return;
     }
 
-    const project = await prisma.project.findUnique({
+    const project = await prisma.project.findFirst({
       where: {
-        subDomain,
-      },
+        OR: [
+          { subDomain: domain },
+          { customDomain: domain }
+        ]
+      }
     });
 
     if (project) {
-      res.status(400).json({ message: "Subdomain already exists" });
+      res.status(400).json({ error: "Domain already exists" });
       return;
     }
 
-    res.status(200).json({ message: "Subdomain is available", subDomain });
+    res.status(200).json({ Message: "Domain is available", domain });
   } catch (error) {
     console.log("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -50,9 +53,14 @@ projectRouter.post("/", async (req: Request, res: Response) => {
     }
 
     const { githubRepoUrl, subDomain, projectName } = data;
+    console.log({
+      githubRepoUrl,
+      subDomain,
+      projectName
+    });
+    
 
     const projectNameSlug = subDomain ? subDomain : generateSlug(2);
-    console.log(`Generated Slug: ${projectNameSlug}`);
 
     // Check if the subdomain is available
     const existingProject = await prisma.project.findUnique({

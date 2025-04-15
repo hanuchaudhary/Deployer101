@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { RepoType } from "@/hooks/useGithubRepos";
 import axios, { AxiosError } from "axios";
@@ -25,14 +24,19 @@ import { HTTP_BACKEND_URL } from "@/config";
 import { useDomain } from "@/hooks/useDomain";
 
 export function CreateProjectDialog({ repository }: { repository: RepoType }) {
-  const [domainType, setDomainType] = useState<"subdomain" | "custom">(
-    "subdomain"
-  );
-  const [subDomain, setSubDomain] = useState("");
-  const [customDomain, setCustomDomain] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { domainResponse, loading: domainLoading, setDomain } = useDomain();
+  const {
+    domainResponse,
+    loading: domainLoading,
+    setDomain,
+    error,
+    domain,
+  } = useDomain();
+
+  useEffect(() => {
+    setDomain(generateRandomSubdomain());
+  }, []);
 
   const { getToken } = useAuth();
   const router = useRouter();
@@ -45,7 +49,7 @@ export function CreateProjectDialog({ repository }: { repository: RepoType }) {
         `${HTTP_BACKEND_URL}/api/v1/project`,
         {
           githubRepoUrl: repository.githubRepoUrl,
-          subDomain: generateRandomSubdomain(),
+          subDomain: domain,
           projectName: repository.name,
         },
         {
@@ -96,70 +100,40 @@ export function CreateProjectDialog({ repository }: { repository: RepoType }) {
               className="mt-1.5"
             />
           </div>
-
-          <RadioGroup
-            value={domainType}
-            onValueChange={(value) =>
-              setDomainType(value as "subdomain" | "custom")
-            }
-            className="space-y-4"
-          >
-            <div className="flex items-start space-x-3 space-y-0">
-              <RadioGroupItem value="subdomain" id="subdomain" />
-              <div className="grid gap-1.5 w-full">
-                <Label htmlFor="subdomain" className="font-medium">
-                  Generate subdomain
-                </Label>
-                <div className="flex">
-                  <Input
-                    value={subDomain}
-                    onChange={(e) => setSubDomain(e.target.value)}
-                    placeholder={repository.name
-                      .toLowerCase()
-                      .replace(/[^a-z0-9]/g, "-")}
-                    className="rounded-r-none"
-                    disabled={domainType !== "subdomain"}
-                  />
-                  <div className="flex items-center justify-center px-3 border border-l-0 rounded-r-md bg-muted text-muted-foreground">
-                    .vercel.app
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3 space-y-0">
-              <RadioGroupItem value="custom" id="custom" />
-              <div className="grid gap-1.5 w-full">
-                <Label htmlFor="custom" className="font-medium">
-                  Custom domain
-                </Label>
+          <div className="flex items-start space-x-3 space-y-0">
+            <div className="grid gap-1.5 w-full">
+              <Label htmlFor="subdomain" className="font-medium">
+                Generate subdomain
+              </Label>
+              <div className="flex">
                 <Input
-                  placeholder="your-domain.com"
-                  onChange={async (e) => {
-                    try {
-                      setDomain(e.target.value);
-                    } catch (error) {
-                      console.log(error);
-                    }
-                  }}
-                  disabled={domainType !== "custom"}
+                  value={domain}
+                  onChange={(e) => setDomain(e.target.value.trim())}
+                  placeholder={repository.name
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]/g, "-")}
+                  className="rounded-r-none"
+                  disabled={isLoading || !domain}
                 />
-                <div>
-                  {domainLoading ? (
-                    <span className="text-sm text-muted-foreground">
-                      Searching if domain is available...
-                    </span>
-                  ) : (
-                    domainResponse && (
-                      <span className="text-sm text-green-500">
-                        {domainResponse}
-                      </span>
-                    )
-                  )}
+                <div className="flex items-center justify-center px-3 border border-l-0 rounded-r-md bg-muted text-muted-foreground">
+                  .deployer101
                 </div>
               </div>
+              <div>
+                {domainLoading ? (
+                  <span className="text-sm text-muted-foreground">
+                    Searching if domain is available...
+                  </span>
+                ) : error ? (
+                  <span className="text-sm text-red-500">{error}</span>
+                ) : domainResponse ? (
+                  <span className="text-sm text-green-500">
+                    {domainResponse}
+                  </span>
+                ) : null}
+              </div>
             </div>
-          </RadioGroup>
+          </div>
         </div>
 
         <DialogFooter>
@@ -167,12 +141,9 @@ export function CreateProjectDialog({ repository }: { repository: RepoType }) {
             <Button variant="outline">Cancel</Button>
           </DialogClose>
           <Button
+            type="submit"
             onClick={handleCreateProject}
-            disabled={
-              isLoading ||
-              (domainType === "subdomain" && !subDomain) ||
-              (domainType === "custom" && !customDomain)
-            }
+            disabled={isLoading || domainLoading || !!error}
           >
             {isLoading ? "Creating..." : "Create Project"}
           </Button>
