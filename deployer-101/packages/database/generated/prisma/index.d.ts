@@ -37,9 +37,9 @@ export namespace $Enums {
   IDLE: 'IDLE',
   READY: 'READY',
   IN_PROGRESS: 'IN_PROGRESS',
-  SUCCESS: 'SUCCESS',
+  SUCCEEDED: 'SUCCEEDED',
   FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED',
+  CANCELED: 'CANCELED',
   QUEUED: 'QUEUED'
 };
 
@@ -3385,6 +3385,7 @@ export namespace Prisma {
     projectId: string | null
     status: $Enums.DEPLOYMENT_STATUS | null
     createdAt: Date | null
+    error: string | null
     updatedAt: Date | null
   }
 
@@ -3393,6 +3394,7 @@ export namespace Prisma {
     projectId: string | null
     status: $Enums.DEPLOYMENT_STATUS | null
     createdAt: Date | null
+    error: string | null
     updatedAt: Date | null
   }
 
@@ -3401,6 +3403,7 @@ export namespace Prisma {
     projectId: number
     status: number
     createdAt: number
+    error: number
     updatedAt: number
     _all: number
   }
@@ -3411,6 +3414,7 @@ export namespace Prisma {
     projectId?: true
     status?: true
     createdAt?: true
+    error?: true
     updatedAt?: true
   }
 
@@ -3419,6 +3423,7 @@ export namespace Prisma {
     projectId?: true
     status?: true
     createdAt?: true
+    error?: true
     updatedAt?: true
   }
 
@@ -3427,6 +3432,7 @@ export namespace Prisma {
     projectId?: true
     status?: true
     createdAt?: true
+    error?: true
     updatedAt?: true
     _all?: true
   }
@@ -3508,6 +3514,7 @@ export namespace Prisma {
     projectId: string
     status: $Enums.DEPLOYMENT_STATUS
     createdAt: Date
+    error: string | null
     updatedAt: Date
     _count: DeploymentCountAggregateOutputType | null
     _min: DeploymentMinAggregateOutputType | null
@@ -3533,6 +3540,7 @@ export namespace Prisma {
     projectId?: boolean
     status?: boolean
     createdAt?: boolean
+    error?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["deployment"]>
@@ -3542,6 +3550,7 @@ export namespace Prisma {
     projectId?: boolean
     status?: boolean
     createdAt?: boolean
+    error?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["deployment"]>
@@ -3551,6 +3560,7 @@ export namespace Prisma {
     projectId?: boolean
     status?: boolean
     createdAt?: boolean
+    error?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["deployment"]>
@@ -3560,10 +3570,11 @@ export namespace Prisma {
     projectId?: boolean
     status?: boolean
     createdAt?: boolean
+    error?: boolean
     updatedAt?: boolean
   }
 
-  export type DeploymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["deployment"]>
+  export type DeploymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "status" | "createdAt" | "error" | "updatedAt", ExtArgs["result"]["deployment"]>
   export type DeploymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }
@@ -3584,6 +3595,7 @@ export namespace Prisma {
       projectId: string
       status: $Enums.DEPLOYMENT_STATUS
       createdAt: Date
+      error: string | null
       updatedAt: Date
     }, ExtArgs["result"]["deployment"]>
     composites: {}
@@ -4013,6 +4025,7 @@ export namespace Prisma {
     readonly projectId: FieldRef<"Deployment", 'String'>
     readonly status: FieldRef<"Deployment", 'DEPLOYMENT_STATUS'>
     readonly createdAt: FieldRef<"Deployment", 'DateTime'>
+    readonly error: FieldRef<"Deployment", 'String'>
     readonly updatedAt: FieldRef<"Deployment", 'DateTime'>
   }
     
@@ -4475,6 +4488,7 @@ export namespace Prisma {
     projectId: 'projectId',
     status: 'status',
     createdAt: 'createdAt',
+    error: 'error',
     updatedAt: 'updatedAt'
   };
 
@@ -4720,6 +4734,7 @@ export namespace Prisma {
     projectId?: StringFilter<"Deployment"> | string
     status?: EnumDEPLOYMENT_STATUSFilter<"Deployment"> | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFilter<"Deployment"> | Date | string
+    error?: StringNullableFilter<"Deployment"> | string | null
     updatedAt?: DateTimeFilter<"Deployment"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
   }
@@ -4729,6 +4744,7 @@ export namespace Prisma {
     projectId?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    error?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
     project?: ProjectOrderByWithRelationInput
   }
@@ -4741,6 +4757,7 @@ export namespace Prisma {
     projectId?: StringFilter<"Deployment"> | string
     status?: EnumDEPLOYMENT_STATUSFilter<"Deployment"> | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFilter<"Deployment"> | Date | string
+    error?: StringNullableFilter<"Deployment"> | string | null
     updatedAt?: DateTimeFilter<"Deployment"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
   }, "id">
@@ -4750,6 +4767,7 @@ export namespace Prisma {
     projectId?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    error?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
     _count?: DeploymentCountOrderByAggregateInput
     _max?: DeploymentMaxOrderByAggregateInput
@@ -4764,6 +4782,7 @@ export namespace Prisma {
     projectId?: StringWithAggregatesFilter<"Deployment"> | string
     status?: EnumDEPLOYMENT_STATUSWithAggregatesFilter<"Deployment"> | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeWithAggregatesFilter<"Deployment"> | Date | string
+    error?: StringNullableWithAggregatesFilter<"Deployment"> | string | null
     updatedAt?: DateTimeWithAggregatesFilter<"Deployment"> | Date | string
   }
 
@@ -4932,6 +4951,7 @@ export namespace Prisma {
     id?: string
     status?: $Enums.DEPLOYMENT_STATUS
     createdAt?: Date | string
+    error?: string | null
     updatedAt?: Date | string
     project: ProjectCreateNestedOneWithoutDeploymentsInput
   }
@@ -4941,6 +4961,7 @@ export namespace Prisma {
     projectId: string
     status?: $Enums.DEPLOYMENT_STATUS
     createdAt?: Date | string
+    error?: string | null
     updatedAt?: Date | string
   }
 
@@ -4948,6 +4969,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDEPLOYMENT_STATUSFieldUpdateOperationsInput | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutDeploymentsNestedInput
   }
@@ -4957,6 +4979,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     status?: EnumDEPLOYMENT_STATUSFieldUpdateOperationsInput | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4965,6 +4988,7 @@ export namespace Prisma {
     projectId: string
     status?: $Enums.DEPLOYMENT_STATUS
     createdAt?: Date | string
+    error?: string | null
     updatedAt?: Date | string
   }
 
@@ -4972,6 +4996,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDEPLOYMENT_STATUSFieldUpdateOperationsInput | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4980,6 +5005,7 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     status?: EnumDEPLOYMENT_STATUSFieldUpdateOperationsInput | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5187,6 +5213,7 @@ export namespace Prisma {
     projectId?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    error?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -5195,6 +5222,7 @@ export namespace Prisma {
     projectId?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    error?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -5203,6 +5231,7 @@ export namespace Prisma {
     projectId?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
+    error?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -5563,6 +5592,7 @@ export namespace Prisma {
     id?: string
     status?: $Enums.DEPLOYMENT_STATUS
     createdAt?: Date | string
+    error?: string | null
     updatedAt?: Date | string
   }
 
@@ -5570,6 +5600,7 @@ export namespace Prisma {
     id?: string
     status?: $Enums.DEPLOYMENT_STATUS
     createdAt?: Date | string
+    error?: string | null
     updatedAt?: Date | string
   }
 
@@ -5640,6 +5671,7 @@ export namespace Prisma {
     projectId?: StringFilter<"Deployment"> | string
     status?: EnumDEPLOYMENT_STATUSFilter<"Deployment"> | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFilter<"Deployment"> | Date | string
+    error?: StringNullableFilter<"Deployment"> | string | null
     updatedAt?: DateTimeFilter<"Deployment"> | Date | string
   }
 
@@ -5749,6 +5781,7 @@ export namespace Prisma {
     id?: string
     status?: $Enums.DEPLOYMENT_STATUS
     createdAt?: Date | string
+    error?: string | null
     updatedAt?: Date | string
   }
 
@@ -5756,6 +5789,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDEPLOYMENT_STATUSFieldUpdateOperationsInput | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5763,6 +5797,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDEPLOYMENT_STATUSFieldUpdateOperationsInput | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5770,6 +5805,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDEPLOYMENT_STATUSFieldUpdateOperationsInput | $Enums.DEPLOYMENT_STATUS
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    error?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

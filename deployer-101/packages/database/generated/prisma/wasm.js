@@ -144,6 +144,7 @@ exports.Prisma.DeploymentScalarFieldEnum = {
   projectId: 'projectId',
   status: 'status',
   createdAt: 'createdAt',
+  error: 'error',
   updatedAt: 'updatedAt'
 };
 
@@ -165,9 +166,9 @@ exports.DEPLOYMENT_STATUS = exports.$Enums.DEPLOYMENT_STATUS = {
   IDLE: 'IDLE',
   READY: 'READY',
   IN_PROGRESS: 'IN_PROGRESS',
-  SUCCESS: 'SUCCESS',
+  SUCCEEDED: 'SUCCEEDED',
   FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED',
+  CANCELED: 'CANCELED',
   QUEUED: 'QUEUED'
 };
 

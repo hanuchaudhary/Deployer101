@@ -367,7 +367,6 @@ projectRouter.get("/logs/:id", async (req: Request, res: Response) => {
     });
 
     const finalLogs = await logs.json();
-
     console.log("Logs: for ",deployment.id,finalLogs);
     res.status(200).json(finalLogs);
   } catch (error) {

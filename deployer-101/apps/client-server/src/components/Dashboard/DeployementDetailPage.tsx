@@ -78,6 +78,8 @@ export default function DeploymentDashboard({ id }: { id: string }) {
     switch (status) {
       case "READY":
         return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case "SUCCEEDED":
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
       case "FAILED":
         return <XCircle className="h-4 w-4 text-red-500" />;
       case "IN_PROGRESS":
@@ -94,6 +96,8 @@ export default function DeploymentDashboard({ id }: { id: string }) {
   const getStatusBadge = (status: DEPLOYMENT_STATUS) => {
     switch (status) {
       case "READY":
+        return <Badge className="bg-green-500">Ready</Badge>;
+      case "SUCCEEDED":
         return <Badge className="bg-green-500">Ready</Badge>;
       case "FAILED":
         return <Badge className="bg-red-500">Error</Badge>;

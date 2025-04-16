@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { projectRouter } from "./routes/project.routes";
 import { userRouter } from "./routes/user.routes";
-import { initKafkaConsumer } from "./config/kafka";
+import { startConsumers } from "./config/kafka";
 import cors from "cors";
 import { webhookRouter } from "./routes/webhook.route";
 dotenv.config();
@@ -23,12 +23,15 @@ LOCAL_ENVS.forEach((env) => {
   }
 });
 
-initKafkaConsumer()
+startConsumers().catch((err) => {
+  console.error("Error starting consumers:", err);
+  process.exit(1);
+});
 
 // Express server setup
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 // Routes
 app.use("/api/v1/user", userRouter);

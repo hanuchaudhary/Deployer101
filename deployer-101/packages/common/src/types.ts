@@ -27,7 +27,7 @@ export type DEPLOYMENT_STATUS =
   | "IDLE"
   | "READY"
   | "IN_PROGRESS"
-  | "SUCCESS"
+  | "SUCCEEDED"
   | "FAILED"
   | "CANCELED"
   | "QUEUED";

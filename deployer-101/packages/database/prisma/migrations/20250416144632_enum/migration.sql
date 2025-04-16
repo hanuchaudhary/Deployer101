@@ -1,0 +1,16 @@
+/*
+  Warnings:
+
+  - The values [SUCCESS,CANCELLED] on the enum `DEPLOYMENT_STATUS` will be removed. If these variants are still used in the database, this will fail.
+
+*/
+-- AlterEnum
+BEGIN;
+CREATE TYPE "DEPLOYMENT_STATUS_new" AS ENUM ('IDLE', 'READY', 'IN_PROGRESS', 'SUCCEEDED', 'FAILED', 'CANCELED', 'QUEUED');
+ALTER TABLE "Deployment" ALTER COLUMN "status" DROP DEFAULT;
+ALTER TABLE "Deployment" ALTER COLUMN "status" TYPE "DEPLOYMENT_STATUS_new" USING ("status"::text::"DEPLOYMENT_STATUS_new");
+ALTER TYPE "DEPLOYMENT_STATUS" RENAME TO "DEPLOYMENT_STATUS_old";
+ALTER TYPE "DEPLOYMENT_STATUS_new" RENAME TO "DEPLOYMENT_STATUS";
+DROP TYPE "DEPLOYMENT_STATUS_old";
+ALTER TABLE "Deployment" ALTER COLUMN "status" SET DEFAULT 'IDLE';
+COMMIT;

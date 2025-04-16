@@ -42,13 +42,13 @@ model Project {
 }
 
 enum DEPLOYMENT_STATUS {
-  IDLE // Initial state
-  READY // Ready to deploy
-  IN_PROGRESS // Deployment in progress
-  SUCCESS // Deployment successful
-  FAILED // Deployment failed
-  CANCELLED // Deployment cancelled
-  QUEUED // Deployment queued
+  IDLE
+  READY
+  IN_PROGRESS
+  SUCCEEDED
+  FAILED
+  CANCELED
+  QUEUED
 }
 
 model Deployment {

@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/config/config.ts","./src/routes/project.routes.ts","./src/routes/user.routes.ts"],"version":"5.8.3"}
+{"root":["./src/index.ts","./src/middleware.ts","./src/config/config.ts","./src/config/kafka.ts","./src/routes/project.routes.ts","./src/routes/user.routes.ts","./src/routes/webhook.route.ts"],"version":"5.8.3"}

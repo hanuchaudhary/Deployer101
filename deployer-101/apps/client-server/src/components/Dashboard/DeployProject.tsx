@@ -53,10 +53,9 @@ export default function DeployProject({
 
   useEffect(() => {
     if (!deploymentId) return;
-
     const interval = setInterval(() => {
       fetchLogs();
-    }, 5000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [deploymentId]); // only start polling when deploymentId is available
@@ -268,7 +267,7 @@ export default function DeployProject({
                   </div>
                 ))}
                 {isDeploying &&
-                  deploymentStatus !== "SUCCESS" && (
+                  deploymentStatus !== "SUCCEEDED" && (
                     <div className="animate-pulse">▋</div>
                   )}
               </div>
