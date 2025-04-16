@@ -45,6 +45,7 @@ import {
 } from "@/hooks/useProjectHook";
 import { useLogs } from "@/hooks/useLogs";
 import { DEPLOYMENT_STATUS, DeploymentType } from "@repo/common/types";
+import { formatDate } from "@/lib/tools";
 
 export default function DeploymentDashboard({ id }: { id: string }) {
   const [domain, setDomain] = useState("");
@@ -76,8 +77,6 @@ export default function DeploymentDashboard({ id }: { id: string }) {
 
   const getStatusIcon = (status: DEPLOYMENT_STATUS) => {
     switch (status) {
-      case "READY":
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
       case "SUCCEEDED":
         return <CheckCircle2 className="h-4 w-4 text-green-500" />;
       case "FAILED":
@@ -95,10 +94,8 @@ export default function DeploymentDashboard({ id }: { id: string }) {
 
   const getStatusBadge = (status: DEPLOYMENT_STATUS) => {
     switch (status) {
-      case "READY":
-        return <Badge className="bg-green-500">Ready</Badge>;
       case "SUCCEEDED":
-        return <Badge className="bg-green-500">Ready</Badge>;
+        return <Badge className="bg-green-500">Succeeded</Badge>;
       case "FAILED":
         return <Badge className="bg-red-500">Error</Badge>;
       case "IN_PROGRESS":
@@ -110,18 +107,6 @@ export default function DeploymentDashboard({ id }: { id: string }) {
       default:
         return <Badge variant="outline">Unknown</Badge>;
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    }).format(date);
   };
 
   const getLogLevelClass = (level: string) => {
@@ -219,14 +204,16 @@ export default function DeploymentDashboard({ id }: { id: string }) {
                         <CollapsibleTrigger className="flex items-center justify-between w-full p-4 hover:bg-muted/50 transition-colors">
                           <div className="flex items-center gap-3">
                             {getStatusIcon(deployment.status)}
-                            <div>
+                            <div className="flex flex-col">
                               <div className="font-medium flex items-center gap-2">
-                                {`Deployment ${deployment.id.substring(0, 8)}`}
+                                <span>{`Deployment ${deployment.id.substring(0, 8)}`}</span>
                                 {getStatusBadge(deployment.status)}
                               </div>
                               <div className="text-sm text-muted-foreground">
-                                {"main"} • {formatDate(deployment.createdAt)}
-                                {/* {deployment.creator && ` • by ${deployment.creator}`} */}
+                                <span className="inline-flex items-center gap-1">
+                                  {"main"} <span>•</span>{" "}
+                                  {formatDate(deployment.createdAt)}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -245,17 +232,33 @@ export default function DeploymentDashboard({ id }: { id: string }) {
                                 Refresh
                               </Button>
                             </div>
-                            <div className="bg-black text-white p-4 rounded-md font-mono text-sm overflow-auto max-h-[400px]">
-                              {logs.map((log) => (
-                                <div key={log.event_id} className="mb-1">
-                                  <span className="text-gray-400 mr-2">
-                                    [{formatDate(log.timestamp)}]
-                                  </span>
-                                  {/* <span className={getLogLevelClass(log.level)}>[{log.level.toUpperCase()}]</span>{" "} */}
-                                  <span>{log.log}</span>
+                            {logs && (
+                              <div className="bg-[#0A0A0A] border border-[#222] text-white p-4 rounded-md font-mono text-sm overflow-auto max-h-[300px]">
+                                {logs.map((log, index) => (
+                                  <div key={index} className="mb-1">
+                                    <span className="text-neutral-500">
+                                      [
+                                      {new Date(
+                                        log.timestamp
+                                      ).toLocaleTimeString()}
+                                      ]
+                                    </span>{" "}
+                                    {log.log}
+                                  </div>
+                                ))}
+                                <div className="py-3">
+                                  {deployment.status === "SUCCEEDED" ? (
+                                    <span className="border px-4 py-1 rounded-2xl bg-secondary text-green-400">
+                                      Deployment Successfull
+                                    </span>
+                                  ) : (
+                                    <span className="border px-4 py-1 rounded-2xl bg-secondary text-red-400">
+                                      Deployment failed
+                                    </span>
+                                  )}
                                 </div>
-                              ))}
-                            </div>
+                              </div>
+                            )}
                           </div>
                         </CollapsibleContent>
                       </Collapsible>

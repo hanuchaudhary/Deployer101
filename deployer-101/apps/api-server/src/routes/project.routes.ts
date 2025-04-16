@@ -22,11 +22,8 @@ projectRouter.post("/domain", async (req: Request, res: Response) => {
 
     const project = await prisma.project.findFirst({
       where: {
-        OR: [
-          { subDomain: domain },
-          { customDomain: domain }
-        ]
-      }
+        OR: [{ subDomain: domain }, { customDomain: domain }],
+      },
     });
 
     if (project) {
@@ -56,9 +53,8 @@ projectRouter.post("/", async (req: Request, res: Response) => {
     console.log({
       githubRepoUrl,
       subDomain,
-      projectName
+      projectName,
     });
-    
 
     const projectNameSlug = subDomain ? subDomain : generateSlug(2);
 
@@ -117,7 +113,7 @@ projectRouter.post("/deploy", async (req: Request, res: Response) => {
     const project = await prisma.project.findUnique({
       where: {
         id: projectId,
-        userId : USER_ID
+        userId: USER_ID,
       },
     });
     if (!project) {
@@ -249,9 +245,9 @@ projectRouter.get("/:id", async (req: Request, res: Response) => {
       where: {
         id,
       },
-      include:{
+      include: {
         deployments: true, // Include the deployments relation
-      }
+      },
     });
     if (!project) {
       res.status(404).json({ error: "Project not found" });
@@ -324,9 +320,10 @@ projectRouter.get("/:id/deployments", async (req: Request, res: Response) => {
     const project = await prisma.project.findUnique({
       where: {
         id,
-      },select:{
+      },
+      select: {
         deployments: true, // Include the deployments relation
-      }
+      },
     });
     if (!project) {
       res.status(404).json({ error: "Project not found" });
@@ -367,10 +364,41 @@ projectRouter.get("/logs/:id", async (req: Request, res: Response) => {
     });
 
     const finalLogs = await logs.json();
-    console.log("Logs: for ",deployment.id,finalLogs);
+    console.log("Logs: for ", deployment.id, finalLogs);
     res.status(200).json(finalLogs);
   } catch (error) {
     console.log("Error:", error);
     res.status(500).json({ error: "Internal Server Error", dbError: error });
   }
 });
+
+projectRouter.get(
+  "/status/:deploymentId",
+  async (req: Request, res: Response) => {
+    try {
+      const { deploymentId } = req.params;
+      if (!deploymentId) {
+        res.status(400).json({ error: "Deployment ID is required" });
+        return;
+      }
+
+      const deployment = await prisma.deployment.findUnique({
+        where: {
+          id: deploymentId,
+        },
+        select: {
+          status: true,
+        },
+      });
+      if (!deployment) {
+        res.status(404).json({ error: "Deployment not found" });
+        return;
+      }
+
+      res.status(200).json({ status: deployment.status });
+    } catch (error) {
+      console.log("Error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+);

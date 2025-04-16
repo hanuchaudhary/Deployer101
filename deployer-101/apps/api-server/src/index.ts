@@ -23,10 +23,7 @@ LOCAL_ENVS.forEach((env) => {
   }
 });
 
-startConsumers().catch((err) => {
-  console.error("Error starting consumers:", err);
-  process.exit(1);
-});
+startConsumers()
 
 // Express server setup
 const app = express();
