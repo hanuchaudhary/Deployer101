@@ -14,6 +14,7 @@ export function ThemeToggle() {
     setIsDark(checked)
     setTheme(checked ? "dark" : "light")
   }
+  
 
   return (
     <div className="flex items-center space-x-2">

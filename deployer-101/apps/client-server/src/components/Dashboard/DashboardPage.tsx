@@ -26,8 +26,6 @@ import { useProjectHook } from "@/hooks/useProjectHook";
 export default function Dashboard() {
   const { projects, loading } = useProjectHook();
   const hasProjects = projects && projects.length > 0;
-  console.log("hasProjects", hasProjects);
-  
 
   if (loading) {
     return (

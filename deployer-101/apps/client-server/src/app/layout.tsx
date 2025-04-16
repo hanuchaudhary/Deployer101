@@ -21,18 +21,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <Provider>
-          <Navbar/>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Provider>
+            <Navbar />
             {children}
             <Toaster richColors />
-          </ThemeProvider>
-        </Provider>
+          </Provider>
+        </ThemeProvider>
       </body>
     </html>
   );

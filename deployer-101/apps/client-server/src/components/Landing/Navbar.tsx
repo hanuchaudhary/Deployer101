@@ -1,9 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
@@ -13,13 +10,8 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
-import { useEffect } from "react";
-import axios from "axios";
-import { HTTP_BACKEND_URL } from "@/config";
 
 export function Navbar() {
-  const pathname = usePathname();
-
   return (
     <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-14 items-center px-10">

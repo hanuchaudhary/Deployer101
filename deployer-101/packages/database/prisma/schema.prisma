@@ -57,6 +57,7 @@ model Deployment {
   project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   status    DEPLOYMENT_STATUS @default(IDLE)
   createdAt DateTime          @default(now())
+  error     String?
   updatedAt DateTime          @updatedAt
 
   @@index([status])

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ProjectType } from "@repo/common/types";
+import { DeploymentType, ProjectType } from "@repo/common/types";
 import { HTTP_BACKEND_URL } from "@/config";
 import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
@@ -75,4 +75,42 @@ export const useSingleProjectHook = (projectId: string) => {
   }, [projectId]);
 
   return { project, loading, fetchProject };
+}
+
+export const useDeploymentsHook = (projectId: string) => {
+  const { getToken } = useAuth();
+
+  const [deployments, setDeployments] = useState<DeploymentType[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchDeployments = async () => {
+    setLoading(true);
+    try {
+      const token = await getToken();
+      const response = await axios.get(
+        `${HTTP_BACKEND_URL}/api/v1/project/${projectId}/deployments`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = response.data;
+      if (Array.isArray(data.deployments)) {
+        setDeployments(data.deployments);
+      } else {
+        throw new Error("Invalid response format");
+      }
+    } catch (err) {
+      console.error("Error fetching deployments:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDeployments();
+  }, [projectId]);
+
+  return { deployments, loading, fetchDeployments };
 }

@@ -16,6 +16,29 @@ export const ecsClient = new ECSClient({
 });
 
 // Kafka Client configuration
+const certsPath = path.join(__dirname, "../certs");
+export const kafkaClient = new Kafka({
+  clientId: "api-server",
+  brokers: [process.env.KAFKA_BROKER!],
+  ssl: {
+    rejectUnauthorized: true,
+    ca: [fs.readFileSync(path.join(certsPath, "ca.pem"), "utf-8")],
+    cert: fs.readFileSync(path.join(certsPath, "service.cert"), "utf-8"),
+    key: fs.readFileSync(path.join(certsPath, "service.key"), "utf-8"),
+  },
+});
+
+// ClickHouse Client configuration
+export const clickhouseClient = createClient({
+  username: process.env.CLICKHOUSE_USER,
+  database: process.env.CLICKHOUSE_DATABASE,
+  url: process.env.CLICKHOUSE_URL,
+});
+
+
+
+
+// Kafka Client configuration
 // export const kafkaCient = new Kafka({
 //   clientId: `api-server`,
 //   brokers: [process.env.KAFKA_BROKER!],
@@ -29,29 +52,3 @@ export const ecsClient = new ECSClient({
 //     mechanism: "plain",
 //   },
 // });
-
-const certsPath = path.join(__dirname, "../certs");
-
-export const kafkaClient = new Kafka({
-  clientId: "api-server",
-  brokers: [process.env.KAFKA_BROKER!],
-  ssl: {
-    rejectUnauthorized: true,
-    ca: [fs.readFileSync(path.join(certsPath, "ca.pem"), "utf-8")],
-    cert: fs.readFileSync(path.join(certsPath, "service.cert"), "utf-8"),
-    key: fs.readFileSync(path.join(certsPath, "service.key"), "utf-8"),
-  },
-  // SSL certificates not working with the following configuration
-  // sasl: {
-  //   mechanism: "plain",
-  //   username: process.env.KAFKA_USERNAME!,
-  //   password: process.env.KAFKA_PASSWORD!,
-  // },
-});
-
-// ClickHouse Client configuration
-export const clickhouseClient = createClient({
-  username: process.env.CLICKHOUSE_USER,
-  database: process.env.CLICKHOUSE_DATABASE,
-  url: process.env.CLICKHOUSE_URL,
-});

@@ -249,6 +249,9 @@ projectRouter.get("/:id", async (req: Request, res: Response) => {
       where: {
         id,
       },
+      include:{
+        deployments: true, // Include the deployments relation
+      }
     });
     if (!project) {
       res.status(404).json({ error: "Project not found" });
@@ -321,10 +324,9 @@ projectRouter.get("/:id/deployments", async (req: Request, res: Response) => {
     const project = await prisma.project.findUnique({
       where: {
         id,
-      },
-      include: {
+      },select:{
         deployments: true, // Include the deployments relation
-      },
+      }
     });
     if (!project) {
       res.status(404).json({ error: "Project not found" });

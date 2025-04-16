@@ -5,8 +5,8 @@ export interface UserType {
   email: string;
   githubUsername: string;
   profileImage: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   projects: ProjectType[]; // One-to-many: User can have multiple projects
 }
 
@@ -16,28 +16,27 @@ export interface ProjectType {
   githubRepoUrl: string;
   subDomain: string;
   customDomain: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   userId: string;
   user: UserType;
   deployments: DeploymentType[];
 }
 
-export enum DEPLOYMENT_STATUS {
-  IDLE = "IDLE", // No deployment in progress
-  READY = "READY", // Ready for deployment
-  IN_PROGRESS = "IN_PROGRESS", // Deployment in progress
-  SUCCESS = "SUCCESS", // Deployment successful
-  FAILED = "FAILED", // Deployment failed
-  CANCELLED = "CANCELLED", // Deployment cancelled
-  QUEUED = "QUEUED", // Deployment queued
-}
+export type DEPLOYMENT_STATUS =
+  | "IDLE"
+  | "READY"
+  | "IN_PROGRESS"
+  | "SUCCESS"
+  | "FAILED"
+  | "CANCELED"
+  | "QUEUED";
 
 export interface DeploymentType {
   id: string;
   projectId: string;
   project: ProjectType;
   status: DEPLOYMENT_STATUS;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
