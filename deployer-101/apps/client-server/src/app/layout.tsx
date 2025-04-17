@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Provider from "@/lib/Provider";
 import { Navbar } from "@/components/Landing/Navbar";
 import { Toaster } from "sonner";
+import Sidebar from "@/components/Dashboard/Sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-black`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -29,7 +30,10 @@ export default function RootLayout({
         >
           <Provider>
             <Navbar />
-            {children}
+            <main className="flex flex-col md:flex-row">
+              <Sidebar />
+              <div className="flex w-full border-t border-l rounded-tl-2xl h-[calc(100vh-55px)]">{children}</div>
+            </main>
             <Toaster richColors />
           </Provider>
         </ThemeProvider>

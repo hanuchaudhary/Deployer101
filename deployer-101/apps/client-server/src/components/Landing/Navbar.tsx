@@ -13,38 +13,36 @@ import {
 
 export function Navbar() {
   return (
-    <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 items-center px-10">
-        <div className="mr-4 flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold">Deployer101</span>
-          </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium"></nav>
-        </div>
-        <div className="ml-auto flex items-center space-x-4">
-          <ThemeToggle />
-          <SignedOut>
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="cursor-pointer"
-            >
-              <SignInButton />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="cursor-pointer"
-            >
-              <SignUpButton />
-            </Button>
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </div>
+    <header className="w-full flex items-center justify-between px-4 py-3">
+      <div className="w-1/4">{/* Left spacer */}</div>
+      <div className="w-2/4 flex justify-center">
+        <Link href="/" className="flex items-center space-x-2">
+          <span className="text-sm">Deployer101</span>
+        </Link>
+      </div>
+      <div className="w-1/4 flex justify-end items-center space-x-4">
+        <ThemeToggle />
+        <SignedOut>
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="cursor-pointer"
+          >
+            <SignInButton />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="cursor-pointer"
+          >
+            <SignUpButton />
+          </Button>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </div>
     </header>
   );

@@ -116,8 +116,8 @@ export default function DeployProject({ projectId }: { projectId: string }) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white">
-      <main className="flex-1 container mx-auto py-6 px-4 md:px-6">
+    <div className="flex flex-col">
+      <main className="py-6 px-4 md:px-6">
         <div className="mb-8">
           <Button
             variant="ghost"
