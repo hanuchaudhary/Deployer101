@@ -31,7 +31,7 @@ export function CreateProjectDialog({ repository }: { repository: RepoType }) {
     loading: domainLoading,
     setDomain,
     error,
-    domain,
+    domain, 
   } = useDomain();
 
   useEffect(() => {

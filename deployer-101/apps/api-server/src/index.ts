@@ -23,7 +23,7 @@ LOCAL_ENVS.forEach((env) => {
   }
 });
 
-startConsumers()
+// startConsumers()
 
 // Express server setup
 const app = express();

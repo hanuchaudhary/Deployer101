@@ -83,24 +83,14 @@ export default function Dashboard() {
             </div>
           </div>
         ) : (
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-3xl font-bold">Projects</h1>
-              <Link href="/deploy">
-                <Button>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  New Project
-                </Button>
-              </Link>
-            </div>
-
-            <div className="mb-6">
-              <Input placeholder="Filter projects..." className="max-w-md" />
+          <div className="p-3">
+            <div className="mb-3">
+              <Input placeholder="Filter projects..." className="" />
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {projects.map((project) => (
-                <Card key={project.id} className="overflow-hidden border-2">
+                <Card key={project.id} className="overflow-hidden border shadow-none bg-transparent">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl">
                       <Link

@@ -57,6 +57,95 @@ export default function DeploymentDashboard({ id }: { id: string }) {
   const { deployments, loading: deploymentsLoading } = useDeploymentsHook(id);
   const { logs, fetchLogs } = useLogs(selectedDeploymentId || "");
 
+  // TODO: Replace with actual logs fetching logic in production
+  const dummyLogs = [
+    {
+      timestamp: new Date(Date.now() - 120000),
+      log: "Deployment started",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 110000),
+      log: "Initializing build environment",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 100000),
+      log: "Installing dependencies...",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 90000),
+      log: "Dependencies installed successfully",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 80000),
+      log: "Building application...",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 70000),
+      log: "Build completed",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 60000),
+      log: "Preparing S3 upload",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 50000),
+      log: "Uploading index.html to S3 bucket",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 40000),
+      log: "Uploading assets/main.js to S3 bucket",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 35000),
+      log: "Uploading assets/styles.css to S3 bucket",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 30000),
+      log: "Uploading assets/images/* to S3 bucket",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 25000),
+      log: "Warning: Large file detected, upload may take longer",
+      level: "warning",
+    },
+    {
+      timestamp: new Date(Date.now() - 20000),
+      log: "Error: Failed to upload assets/videos/intro.mp4",
+      level: "error",
+    },
+    {
+      timestamp: new Date(Date.now() - 15000),
+      log: "Retrying failed uploads...",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 10000),
+      log: "All files uploaded to S3 successfully",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 5000),
+      log: "Configuring CloudFront distribution",
+      level: "info",
+    },
+    {
+      timestamp: new Date(Date.now() - 1000),
+      log: "Deployment successful!",
+      level: "info",
+    },
+  ];
+
   useEffect(() => {
     if (deployments.length > 0 && !selectedDeploymentId) {
       setSelectedDeploymentId(deployments[0].id);
@@ -109,6 +198,7 @@ export default function DeploymentDashboard({ id }: { id: string }) {
     }
   };
 
+  // TODO: ADD LOG LEVELS
   const getLogLevelClass = (level: string) => {
     switch (level) {
       case "error":
@@ -122,43 +212,35 @@ export default function DeploymentDashboard({ id }: { id: string }) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex-1 container mx-auto py-6">
-        <div className="mb-6">
-          <Button variant="ghost" size="sm" asChild className="mb-4">
-            <Link href="/dashboard">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Projects
-            </Link>
-          </Button>
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold">
-              {project?.name || "Project Name"}
-            </h1>
-            <Button variant="outline" size="sm" asChild>
-              <a
-                href={project?.subDomain || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Visit
-              </a>
-            </Button>
-          </div>
-          <div className="flex items-center text-sm text-muted-foreground mt-1">
-            <GitBranch className="mr-1 h-4 w-4" />
-            <span className="mr-4">main</span>
-            <Clock className="mr-1 h-4 w-4" />
-            <span>
-              Last deployed{" "}
-              {project?.updatedAt ? formatDate(project.updatedAt) : "Recently"}
-            </span>
-          </div>
+    <div className="flex flex-col w-full">
+      <div className="flex items-center justify-between border-b p-3">
+        <h1 className="text-sm font-semibold">
+          Project: {project?.name || "Project Name"}
+        </h1>
+        <Button variant="outline" size="sm" asChild>
+          <a
+            href={project?.subDomain || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ExternalLink className="mr-2 h-4 w-4" />
+            Visit
+          </a>
+        </Button>
+      </div>
+      <div className="">
+        <div className="flex pb-2 p-3 items-center text-sm text-muted-foreground mt-1">
+          <GitBranch className="mr-1 h-4 w-4" />
+          <span className="mr-4">main</span>
+          <Clock className="mr-1 h-4 w-4" />
+          <span>
+            Last deployed{" "}
+            {project?.updatedAt ? formatDate(project.updatedAt) : "Recently"}
+          </span>
         </div>
 
         <Tabs defaultValue="deployments">
-          <TabsList className="mb-4">
+          <TabsList className="mx-3">
             <TabsTrigger value="deployments">
               <Terminal className="mr-2 h-4 w-4" />
               Deployments
@@ -174,14 +256,14 @@ export default function DeploymentDashboard({ id }: { id: string }) {
           </TabsList>
 
           <TabsContent value="deployments" className="space-y-4">
-            <Card>
-              <CardHeader>
+            <Card className="rounded-none p-3 border-t border-l-0 border-r-0 border-b-0 shadow-none bg-transparent">
+              <CardHeader className="p-0">
                 <CardTitle>Deployments</CardTitle>
                 <CardDescription>
                   View all deployments for this project
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <div className="space-y-4">
                   {deploymentsLoading ? (
                     <div className="flex justify-center p-4">
@@ -232,9 +314,9 @@ export default function DeploymentDashboard({ id }: { id: string }) {
                                 Refresh
                               </Button>
                             </div>
-                            {logs && (
+                            {dummyLogs && (
                               <div className="bg-[#0A0A0A] border border-[#222] text-white p-4 rounded-md font-mono text-sm overflow-auto max-h-[300px]">
-                                {logs.map((log, index) => (
+                                {dummyLogs.map((log, index) => (
                                   <div key={index} className="mb-1">
                                     <span className="text-neutral-500">
                                       [
@@ -270,39 +352,14 @@ export default function DeploymentDashboard({ id }: { id: string }) {
           </TabsContent>
 
           <TabsContent value="domains" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Add Custom Domain</CardTitle>
-                <CardDescription>
-                  Connect your project to a custom domain
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleAddDomain} className="flex gap-2">
-                  <div className="flex-1">
-                    <Label htmlFor="domain" className="sr-only">
-                      Domain
-                    </Label>
-                    <Input
-                      id="domain"
-                      placeholder="example.com"
-                      value={domain}
-                      onChange={(e) => setDomain(e.target.value)}
-                    />
-                  </div>
-                  <Button type="submit">Add</Button>
-                </form>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
+            <Card className="rounded-none p-3 border-t border-l-0 border-r-0 border-b-0 shadow-none bg-transparent">
+              <CardHeader className="p-0">
                 <CardTitle>Domains</CardTitle>
                 <CardDescription>
                   Domains connected to this project
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-2 border rounded-md">
                     <div className="flex items-center">
@@ -322,12 +379,12 @@ export default function DeploymentDashboard({ id }: { id: string }) {
           </TabsContent>
 
           <TabsContent value="settings">
-            <Card>
-              <CardHeader>
+            <Card className="rounded-none p-3 border-t border-l-0 border-r-0 border-b-0 shadow-none bg-transparent">
+              <CardHeader className="p-0">
                 <CardTitle>Project Settings</CardTitle>
                 <CardDescription>Manage your project settings</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-0">
                 <div className="space-y-2">
                   <Label htmlFor="project-name">Project Name</Label>
                   <Input
@@ -341,7 +398,7 @@ export default function DeploymentDashboard({ id }: { id: string }) {
                 </div>
                 <Button>Save Changes</Button>
               </CardContent>
-              <CardFooter className="border-t mt-4 flex flex-col items-start">
+              <CardFooter className="border-t mt-4 flex flex-col items-start p-0">
                 <h3 className="text-lg font-medium mb-2">Danger Zone</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Once you delete a project, there is no going back. Please be
@@ -352,7 +409,7 @@ export default function DeploymentDashboard({ id }: { id: string }) {
             </Card>
           </TabsContent>
         </Tabs>
-      </main>
+      </div>
     </div>
   );
 }

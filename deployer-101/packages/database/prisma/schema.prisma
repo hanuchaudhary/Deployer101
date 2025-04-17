@@ -59,6 +59,18 @@ model Deployment {
   createdAt DateTime          @default(now())
   error     String?
   updatedAt DateTime          @updatedAt
+  Log       Log[]
 
   @@index([status])
+}
+
+model Log {
+  id           String     @id @default(uuid())
+  deploymentId String
+  deployment   Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  log          String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([createdAt])
 }
